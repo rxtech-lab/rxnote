@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSAppClip</key>
+	<dict>
+		<key>NSAppClipRequestEphemeralUserNotification</key>
+		<false/>
+		<key>NSAppClipRequestLocationConfirmation</key>
+		<false/>
+	</dict>
+
+	<!-- Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location access is needed to pick your current location on the map</string>
+
+	<!-- Export Compliance -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+
+	<!-- API Configuration -->
+	<key>API_BASE_URL</key>
+	<string>$(API_BASE_URL)</string>
+	<key>AUTH_ISSUER</key>
+	<string>$(AUTH_ISSUER)</string>
+	<key>AUTH_CLIENT_ID</key>
+	<string>$(AUTH_CLIENT_ID)</string>
+	<key>AUTH_REDIRECT_URI</key>
+	<string>$(AUTH_REDIRECT_URI)</string>
+	<key>AUTH_SCOPES</key>
+	<string>$(AUTH_SCOPES)</string>
+</dict>
+</plist>

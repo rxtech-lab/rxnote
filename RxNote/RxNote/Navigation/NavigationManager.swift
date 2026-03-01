@@ -1,0 +1,137 @@
+//
+//  NavigationManager.swift
+//  RxNote
+//
+//  Centralized navigation state manager for adaptive navigation
+//
+
+import Observation
+import RxNoteCore
+import SwiftUI
+
+/// Navigation destinations for NavigationStack
+enum AppDestination: Hashable {
+    case noteDetail(id: Int)
+    case webPage(WebPage)
+}
+
+/// Main tabs in TabView (iPhone) and sections in Sidebar (iPad)
+enum AppTab: String, CaseIterable, Identifiable {
+    case notes = "Notes"
+    case settings = "Settings"
+
+    var id: String {
+        rawValue
+    }
+
+    var systemImage: String {
+        switch self {
+        case .notes: return "note.text"
+        case .settings: return "gearshape"
+        }
+    }
+}
+
+/// Centralized navigation state manager
+@Observable
+@MainActor
+final class NavigationManager {
+    // MARK: - Tab/Section Selection
+
+    /// Currently selected tab (TabView) or section (Sidebar)
+    var selectedTab: AppTab = .notes
+
+    // MARK: - Detail Selection State
+
+    /// Selected note ID for detail view (iPad split view)
+    var selectedNoteId: Int?
+
+    // MARK: - Navigation Paths (for NavigationStack in TabView)
+
+    /// Navigation path for Notes tab
+    var notesNavigationPath = NavigationPath()
+
+    /// Navigation path for Settings tab
+    var settingsNavigationPath = NavigationPath()
+
+    // MARK: - Deep Link State
+
+    var isLoadingDeepLink = false
+    var deepLinkError: Error?
+    var showDeepLinkError = false
+
+    // MARK: - Column Visibility (iPad)
+
+    var columnVisibility: NavigationSplitViewVisibility = .automatic
+
+    // MARK: - Services
+
+    private let qrCodeService = QrCodeService()
+
+    // MARK: - Navigation Methods
+
+    /// Navigate to a note by its ID
+    func navigateToNote(id: Int) {
+        if selectedTab != .notes {
+            selectedTab = .notes
+        }
+        selectedNoteId = id
+        notesNavigationPath.append(AppDestination.noteDetail(id: id))
+    }
+
+    /// Navigate to notes tab
+    func navigateToNotes() {
+        selectedTab = .notes
+    }
+
+    /// Clear all detail selections
+    func clearSelections() {
+        selectedNoteId = nil
+    }
+
+    /// Clear navigation paths
+    func clearNavigationPaths() {
+        notesNavigationPath = NavigationPath()
+        settingsNavigationPath = NavigationPath()
+    }
+
+    // MARK: - Deep Link Handling
+
+    /// Handle deep link URL by resolving via backend QR code service
+    func handleDeepLink(_ url: URL) async {
+        isLoadingDeepLink = true
+        defer { isLoadingDeepLink = false }
+
+        do {
+            // Resolve URL via QR code scan endpoint
+            let scanResponse = try await qrCodeService.scanQrCode(qrcontent: url.absoluteString)
+
+            // Extract note ID from the resolved URL
+            if let noteId = extractNoteId(from: scanResponse.url) {
+                if selectedTab != .notes {
+                    selectedTab = .notes
+                }
+                selectedNoteId = noteId
+                notesNavigationPath.append(AppDestination.noteDetail(id: noteId))
+            }
+        } catch {
+            deepLinkError = error
+            showDeepLinkError = true
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Extract note ID from a URL path like /api/v1/notes/123
+    private func extractNoteId(from urlString: String) -> Int? {
+        guard let url = URL(string: urlString) else { return nil }
+        let components = url.pathComponents
+        if let notesIndex = components.firstIndex(of: "notes"),
+           notesIndex + 1 < components.count,
+           let id = Int(components[notesIndex + 1])
+        {
+            return id
+        }
+        return nil
+    }
+}

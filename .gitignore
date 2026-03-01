@@ -1,0 +1,23 @@
+.DS_Store
+*.db
+RxNote/packages/RxNoteCore/.build
+*.xcuserstate
+RxNote/RxNote.xcodeproj/project.xcworkspace/xcuserdata/qiweili.xcuserdatad/UserInterfaceState.xcuserstate
+
+# Build artifacts
+.build/
+build.log
+test.log
+*.xcresult
+test-results.xcresult
+build.sh
+*.xcuserstate
+*.swiftmodule
+*.swiftdeps
+*.d
+*.dia
+*.log
+
+# User-specific Xcode data
+xcuserdata/
+.vercel

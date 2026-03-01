@@ -1,0 +1,36 @@
+{
+  "configurations" : [
+    {
+      "id" : "F138A4BF-D13A-4888-A748-9CC700EDCE59",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testExecutionOrdering" : "random",
+    "executeInParallel" : true,
+    "parallelizationMaximumWorkers" : 2,
+    "maximumTestRepetitions" : 3,
+    "testRepetitionMode" : "retryOnFailure",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:RxNote.xcodeproj",
+        "identifier" : "DF66256D2F29137000333552",
+        "name" : "RxNoteTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:RxNote.xcodeproj",
+        "identifier" : "DF6625772F29137000333552",
+        "name" : "RxNoteUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
