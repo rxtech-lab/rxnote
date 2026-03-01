@@ -9,6 +9,18 @@ import Observation
 import RxNoteCore
 import SwiftUI
 
+/// Errors that can occur during deep link handling
+enum DeepLinkError: LocalizedError {
+    case invalidURL(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL(let url):
+            return "Unable to open link: \(url)"
+        }
+    }
+}
+
 /// Navigation destinations for NavigationStack
 enum AppDestination: Hashable {
     case noteDetail(id: Int)
@@ -107,15 +119,19 @@ final class NavigationManager {
             let scanResponse = try await qrCodeService.scanQrCode(qrcontent: url.absoluteString)
 
             // Extract note ID from the resolved URL
-            if let noteId = extractNoteId(from: scanResponse.url) {
-                if selectedTab != .notes {
-                    selectedTab = .notes
-                }
-                selectedNoteId = noteId
-                notesNavigationPath.append(AppDestination.noteDetail(id: noteId))
+            guard let noteId = extractNoteId(from: scanResponse.url) else {
+                throw DeepLinkError.invalidURL(url.absoluteString)
             }
+            
+            if selectedTab != .notes {
+                selectedTab = .notes
+            }
+            selectedNoteId = noteId
+            notesNavigationPath.append(AppDestination.noteDetail(id: noteId))
         } catch {
             deepLinkError = error
+            // Small delay to ensure view hierarchy is stable before showing alert
+            try? await Task.sleep(for: .milliseconds(100))
             showDeepLinkError = true
         }
     }

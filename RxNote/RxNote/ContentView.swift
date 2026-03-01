@@ -10,6 +10,9 @@ import SwiftUI
 
 struct ContentView: View {
     var authManager: OAuthManager
+    
+    /// Pending deep link URL received before authentication completed
+    @State private var pendingDeepLinkURL: URL?
 
     var body: some View {
         Group {
@@ -17,7 +20,7 @@ struct ContentView: View {
             case .unknown:
                 AuthLoadingView()
             case .authenticated:
-                AdaptiveRootView()
+                AdaptiveRootView(pendingDeepLinkURL: $pendingDeepLinkURL)
             case .unauthenticated:
                 RxSignInView(
                     manager: authManager,
@@ -31,6 +34,24 @@ struct ContentView: View {
                 #if os(macOS)
                 .frame(maxWidth: 500, maxHeight: 700)
                 #endif
+            }
+        }
+        // Handle deep links at the top level to capture them before auth completes
+        .onOpenURL { url in
+            if authManager.authState == .authenticated {
+                // Will be handled by AdaptiveRootView's onOpenURL
+            } else {
+                // Store for later processing after authentication
+                pendingDeepLinkURL = url
+            }
+        }
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { userActivity in
+            if let url = userActivity.webpageURL {
+                if authManager.authState == .authenticated {
+                    // Will be handled by AdaptiveRootView
+                } else {
+                    pendingDeepLinkURL = url
+                }
             }
         }
     }

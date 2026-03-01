@@ -17,6 +17,7 @@ import SwiftUI
 /// 4. If 403, show access denied
 struct AppClipRootView: View {
     @State private var noteId: Int?
+    @State private var noteDetail: NoteDetail?
     @State private var parseError: String?
     @State private var oauthManager = OAuthManager(
         configuration: AppConfiguration.shared.rxAuthConfiguration
@@ -24,6 +25,9 @@ struct AppClipRootView: View {
 
     /// Service for QR code resolution
     private let qrCodeService = QrCodeService()
+
+    /// Token storage for optional auth
+    private let tokenStorage = KeychainTokenStorage(serviceName: "com.rxlab.RxNote")
 
     /// Store resolved URL for retry after authentication
     @State private var resolvedNoteUrl: String?
@@ -74,49 +78,43 @@ struct AppClipRootView: View {
                     .accessibilityIdentifier("invalid-url")
                 } else if isLoading {
                     loadingView
-                } else if noteId != nil {
-                    // TODO: Replace with NoteDetailView after OpenAPI regen
-                    ContentUnavailableView(
-                        "Note Preview",
-                        systemImage: "note.text",
-                        description: Text("Note detail view coming soon")
-                    )
-                    .toolbar {
-                        if oauthManager.currentUser != nil {
-                            ToolbarItem(placement: .primaryAction) {
-                                Menu {
-                                    Button(role: .destructive) {
-                                        showSignOutConfirmation = true
+                } else if let note = noteDetail, let id = noteId {
+                    // Display note in read-only mode (no edit button for App Clips)
+                    NoteEditorView(mode: .view(noteId: id, existing: note))
+                        .toolbar {
+                            if oauthManager.currentUser != nil {
+                                ToolbarItem(placement: .primaryAction) {
+                                    Menu {
+                                        Button(role: .destructive) {
+                                            showSignOutConfirmation = true
+                                        } label: {
+                                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                                        }
+                                        .accessibilityIdentifier("app-clips-sign-out-button")
                                     } label: {
-                                        Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                                        Image(systemName: "ellipsis.circle")
                                     }
-                                    .accessibilityIdentifier("app-clips-sign-out-button")
-                                } label: {
-                                    Image(systemName: "ellipsis.circle")
+                                    .accessibilityIdentifier("app-clips-more-menu")
                                 }
-                                .accessibilityIdentifier("app-clips-more-menu")
                             }
                         }
-                    }
-                    .confirmationDialog(
-                        title: "Sign Out",
-                        message: "Are you sure you want to sign out?",
-                        confirmButtonTitle: "Sign Out",
-                        isPresented: $showSignOutConfirmation
-                    ) {
-                        Task {
-                            await oauthManager.logout()
-                            if let qrcontent = originalQrContent {
-                                await fetchNoteFromQrCode(qrcontent)
+                        .confirmationDialog(
+                            title: "Sign Out",
+                            message: "Are you sure you want to sign out?",
+                            confirmButtonTitle: "Sign Out",
+                            isPresented: $showSignOutConfirmation
+                        ) {
+                            Task {
+                                await oauthManager.logout()
+                                if let qrcontent = originalQrContent {
+                                    await fetchNoteFromQrCode(qrcontent)
+                                }
                             }
                         }
-                    }
                 } else if let error = loadError {
                     errorView(error: error)
-                } else if noteId == nil {
-                    ProgressView("Waiting for URL...")
                 } else {
-                    ProgressView("Loading...")
+                    ProgressView("Waiting for URL...")
                 }
             }
         }
@@ -187,6 +185,7 @@ struct AppClipRootView: View {
         accessDenied = false
         parseError = nil
         loadError = nil
+        noteDetail = nil
         isLoading = true
 
         // Store the original QR content for retry after auth
@@ -195,15 +194,20 @@ struct AppClipRootView: View {
         defer { isLoading = false }
 
         do {
+            // Step 1: Scan QR code to get the API URL
             let scanResponse = try await qrCodeService.scanQrCode(qrcontent: qrcontent)
             resolvedNoteUrl = scanResponse.url
 
             // Extract note ID from URL
-            if let id = extractNoteId(from: scanResponse.url) {
-                noteId = id
-            } else {
+            guard let id = extractNoteId(from: scanResponse.url) else {
                 parseError = "Could not parse note ID from URL"
+                return
             }
+            noteId = id
+
+            // Step 2: Fetch note detail directly from the resolved URL
+            let note = try await fetchNoteFromUrl(scanResponse.url)
+            noteDetail = note
 
         } catch let error as APIError {
             switch error {
@@ -218,6 +222,61 @@ struct AppClipRootView: View {
             }
         } catch {
             loadError = error
+        }
+    }
+
+    /// Fetch note detail directly from the API URL with optional authentication
+    private func fetchNoteFromUrl(_ urlString: String) async throws -> NoteDetail {
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        // Add auth token if available (optional auth for App Clips)
+        if let accessToken = tokenStorage.getAccessToken() {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        switch httpResponse.statusCode {
+        case 200:
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .custom { decoder in
+                let container = try decoder.singleValueContainer()
+                let dateString = try container.decode(String.self)
+
+                // Try ISO8601 with fractional seconds first
+                let formatter = ISO8601DateFormatter()
+                formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                if let date = formatter.date(from: dateString) {
+                    return date
+                }
+
+                // Fallback to standard ISO8601
+                formatter.formatOptions = [.withInternetDateTime]
+                if let date = formatter.date(from: dateString) {
+                    return date
+                }
+
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date: \(dateString)")
+            }
+            return try decoder.decode(NoteDetail.self, from: data)
+        case 401:
+            throw APIError.unauthorized
+        case 403:
+            throw APIError.forbidden
+        case 404:
+            throw APIError.notFound
+        default:
+            throw APIError.serverError("HTTP \(httpResponse.statusCode)")
         }
     }
 

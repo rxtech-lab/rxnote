@@ -9,10 +9,10 @@
     }
   ],
   "defaultOptions" : {
-    "testExecutionOrdering" : "random",
     "executeInParallel" : true,
-    "parallelizationMaximumWorkers" : 2,
     "maximumTestRepetitions" : 3,
+    "parallelizationMaximumWorkers" : 2,
+    "testExecutionOrdering" : "random",
     "testRepetitionMode" : "retryOnFailure",
     "testTimeoutsEnabled" : true
   },
@@ -20,8 +20,15 @@
     {
       "target" : {
         "containerPath" : "container:RxNote.xcodeproj",
-        "identifier" : "DF66256D2F29137000333552",
-        "name" : "RxNoteTests"
+        "identifier" : "DF6625A02F29138400333552",
+        "name" : "RxNoteClipsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:RxNote.xcodeproj",
+        "identifier" : "DF6625AA2F29138400333552",
+        "name" : "RxNoteClipsUITests"
       }
     },
     {
@@ -29,6 +36,13 @@
         "containerPath" : "container:RxNote.xcodeproj",
         "identifier" : "DF6625772F29137000333552",
         "name" : "RxNoteUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:RxNote.xcodeproj",
+        "identifier" : "DF66256D2F29137000333552",
+        "name" : "RxNoteTests"
       }
     }
   ],

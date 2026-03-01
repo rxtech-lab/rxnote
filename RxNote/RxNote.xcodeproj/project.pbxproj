@@ -76,6 +76,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DF407A362F54C7340062B319 /* Exceptions for "RxNoteUITests" folder in "RxNoteClipsUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				utils/accessibility.swift,
+				utils/DotEnv.swift,
+				utils/launch.swift,
+				utils/signin.swift,
+			);
+			target = DF6625AA2F29138400333552 /* RxNoteClipsUITests */;
+		};
 		DF44CC952F548B6100A2E4A4 /* Exceptions for "RxNote" folder in "RxNoteClips" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -129,8 +139,8 @@
 		DF66255F2F29136F00333552 /* RxNote */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DF44CC952F548B6100A2E4A4 /* Exceptions for "RxNote" folder in "RxNoteClips" target */,
 				DF44CCB02F548C4800A2E4A4 /* Exceptions for "RxNote" folder in "RxNote" target */,
+				DF44CC952F548B6100A2E4A4 /* Exceptions for "RxNote" folder in "RxNoteClips" target */,
 			);
 			path = RxNote;
 			sourceTree = "<group>";
@@ -142,6 +152,9 @@
 		};
 		DF66257B2F29137000333552 /* RxNoteUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DF407A362F54C7340062B319 /* Exceptions for "RxNoteUITests" folder in "RxNoteClipsUITests" target */,
+			);
 			path = RxNoteUITests;
 			sourceTree = "<group>";
 		};
