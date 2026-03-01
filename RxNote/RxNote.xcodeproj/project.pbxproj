@@ -1,0 +1,1174 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DF1A77E42F320CE6000C757A /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = DF1A77E32F320CE6000C757A /* TestPlan.xctestplan */; };
+		DF1A77E52F320CE6000C757A /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = DF1A77E32F320CE6000C757A /* TestPlan.xctestplan */; };
+		DF44CB3D2F545C0100A2E4A4 /* icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = DF44CB3C2F545C0100A2E4A4 /* icon.icon */; };
+		DF44CB3E2F545C0100A2E4A4 /* icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = DF44CB3C2F545C0100A2E4A4 /* icon.icon */; };
+		DF6625B52F29138400333552 /* RxNoteClips.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = DF6625902F29138300333552 /* RxNoteClips.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DF6626072F2A54C200333552 /* RxNoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = DF6626062F2A54C200333552 /* RxNoteCore */; };
+		DF6626612F2B828600333552 /* RxNoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = DF6626602F2B828600333552 /* RxNoteCore */; };
+		DF6628362F2E327300333552 /* RxNoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = DF6628352F2E327300333552 /* RxNoteCore */; };
+		DFE7DB8A2F49610900018A97 /* RxAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DFE7DB892F49610900018A97 /* RxAuthSwift */; };
+		DFE7DB8C2F49610900018A97 /* RxAuthSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DFE7DB8B2F49610900018A97 /* RxAuthSwiftUI */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DF66256F2F29137000333552 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF6625552F29136F00333552 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DF66255C2F29136F00333552;
+			remoteInfo = RxNote;
+		};
+		DF6625792F29137000333552 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF6625552F29136F00333552 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DF66255C2F29136F00333552;
+			remoteInfo = RxNote;
+		};
+		DF6625A22F29138400333552 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF6625552F29136F00333552 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DF66258F2F29138300333552;
+			remoteInfo = RxNoteClips;
+		};
+		DF6625AC2F29138400333552 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF6625552F29136F00333552 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DF66258F2F29138300333552;
+			remoteInfo = RxNoteClips;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DF6625BA2F29138400333552 /* Embed App Clips */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+			dstSubfolderSpec = 16;
+			files = (
+				DF6625B52F29138400333552 /* RxNoteClips.app in Embed App Clips */,
+			);
+			name = "Embed App Clips";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		DF1A77E32F320CE6000C757A /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		DF44CB3C2F545C0100A2E4A4 /* icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = icon.icon; sourceTree = "<group>"; };
+		DF66255D2F29136F00333552 /* RxNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF66256E2F29137000333552 /* RxNoteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RxNoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF6625782F29137000333552 /* RxNoteUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RxNoteUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF6625902F29138300333552 /* RxNoteClips.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxNoteClips.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF6625A12F29138400333552 /* RxNoteClipsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RxNoteClipsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF6625AB2F29138400333552 /* RxNoteClipsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RxNoteClipsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DF44CC952F548B6100A2E4A4 /* Exceptions for "RxNote" folder in "RxNoteClips" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/WebPage.swift,
+				Navigation/NavigationManager.swift,
+				Views/AdaptiveRootView.swift,
+				Views/AppClip/AppClipAccessDeniedView.swift,
+				Views/AppClip/AppClipRootView.swift,
+				Views/Loading/LoadingOverlay.swift,
+				Views/Modifiers/ConfirmationDialogModifier.swift,
+				Views/Notes/ActionEditorView.swift,
+				Views/Notes/FullscreenImageView.swift,
+				Views/Notes/LocationPickerView.swift,
+				Views/Notes/NoteDetailView.swift,
+				Views/Notes/NoteEditorView.swift,
+				Views/Notes/NoteListView.swift,
+				Views/Notes/WiFiActionButton.swift,
+				Views/QRCode/NFCLockSheet.swift,
+				Views/QRCode/QRCodeScannerToolbar.swift,
+				Views/QRCode/QRCodeScannerView.swift,
+				Views/QRCode/QRCodeView.swift,
+				Views/QRCode/QRPrintConfiguration.swift,
+				Views/QRCode/QRPrintConfigurationView.swift,
+				Views/QRCode/QRPrintLayoutView.swift,
+				Views/Settings/SettingsView.swift,
+				Views/Settings/WebPageView.swift,
+				Views/Shared/AdaptiveList.swift,
+				Views/Shared/CameraPickerView.swift,
+				Views/Sidebar/SidebarNavigationView.swift,
+				Views/TabBar/TabBarView.swift,
+			);
+			target = DF66258F2F29138300333552 /* RxNoteClips */;
+		};
+		DF44CCAF2F548C4700A2E4A4 /* Exceptions for "RxNoteClips" folder in "RxNoteClips" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DF66258F2F29138300333552 /* RxNoteClips */;
+		};
+		DF44CCB02F548C4800A2E4A4 /* Exceptions for "RxNote" folder in "RxNote" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DF66255C2F29136F00333552 /* RxNote */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		DF66255F2F29136F00333552 /* RxNote */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DF44CC952F548B6100A2E4A4 /* Exceptions for "RxNote" folder in "RxNoteClips" target */,
+				DF44CCB02F548C4800A2E4A4 /* Exceptions for "RxNote" folder in "RxNote" target */,
+			);
+			path = RxNote;
+			sourceTree = "<group>";
+		};
+		DF6625712F29137000333552 /* RxNoteTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RxNoteTests;
+			sourceTree = "<group>";
+		};
+		DF66257B2F29137000333552 /* RxNoteUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RxNoteUITests;
+			sourceTree = "<group>";
+		};
+		DF6625912F29138300333552 /* RxNoteClips */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DF44CCAF2F548C4700A2E4A4 /* Exceptions for "RxNoteClips" folder in "RxNoteClips" target */,
+			);
+			path = RxNoteClips;
+			sourceTree = "<group>";
+		};
+		DF6625A42F29138400333552 /* RxNoteClipsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RxNoteClipsTests;
+			sourceTree = "<group>";
+		};
+		DF6625AE2F29138400333552 /* RxNoteClipsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RxNoteClipsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DF66255A2F29136F00333552 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF6626072F2A54C200333552 /* RxNoteCore in Frameworks */,
+				DFE7DB8C2F49610900018A97 /* RxAuthSwiftUI in Frameworks */,
+				DF6626612F2B828600333552 /* RxNoteCore in Frameworks */,
+				DFE7DB8A2F49610900018A97 /* RxAuthSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66256B2F29137000333552 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF6625752F29137000333552 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66258D2F29138300333552 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF6628362F2E327300333552 /* RxNoteCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66259E2F29138400333552 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF6625A82F29138400333552 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DF6625542F29136F00333552 = {
+			isa = PBXGroup;
+			children = (
+				DF1A77E32F320CE6000C757A /* TestPlan.xctestplan */,
+				DF66255F2F29136F00333552 /* RxNote */,
+				DF6625712F29137000333552 /* RxNoteTests */,
+				DF66257B2F29137000333552 /* RxNoteUITests */,
+				DF6625912F29138300333552 /* RxNoteClips */,
+				DF6625A42F29138400333552 /* RxNoteClipsTests */,
+				DF6625AE2F29138400333552 /* RxNoteClipsUITests */,
+				DF66255E2F29136F00333552 /* Products */,
+				DF6628302F2E327300333552 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		DF66255E2F29136F00333552 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF66255D2F29136F00333552 /* RxNote.app */,
+				DF66256E2F29137000333552 /* RxNoteTests.xctest */,
+				DF6625782F29137000333552 /* RxNoteUITests.xctest */,
+				DF6625902F29138300333552 /* RxNoteClips.app */,
+				DF6625A12F29138400333552 /* RxNoteClipsTests.xctest */,
+				DF6625AB2F29138400333552 /* RxNoteClipsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF6628302F2E327300333552 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF44CB3C2F545C0100A2E4A4 /* icon.icon */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DF66255C2F29136F00333552 /* RxNote */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF6625812F29137000333552 /* Build configuration list for PBXNativeTarget "RxNote" */;
+			buildPhases = (
+				DF6625592F29136F00333552 /* Sources */,
+				DF66255A2F29136F00333552 /* Frameworks */,
+				DF66255B2F29136F00333552 /* Resources */,
+				DF6625BA2F29138400333552 /* Embed App Clips */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DF66255F2F29136F00333552 /* RxNote */,
+			);
+			name = RxNote;
+			packageProductDependencies = (
+				DF6626062F2A54C200333552 /* RxNoteCore */,
+				DF6626602F2B828600333552 /* RxNoteCore */,
+				DFE7DB892F49610900018A97 /* RxAuthSwift */,
+				DFE7DB8B2F49610900018A97 /* RxAuthSwiftUI */,
+			);
+			productName = RxNote;
+			productReference = DF66255D2F29136F00333552 /* RxNote.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DF66256D2F29137000333552 /* RxNoteTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF6625862F29137000333552 /* Build configuration list for PBXNativeTarget "RxNoteTests" */;
+			buildPhases = (
+				DF66256A2F29137000333552 /* Sources */,
+				DF66256B2F29137000333552 /* Frameworks */,
+				DF66256C2F29137000333552 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF6625702F29137000333552 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DF6625712F29137000333552 /* RxNoteTests */,
+			);
+			name = RxNoteTests;
+			packageProductDependencies = (
+			);
+			productName = RxNoteTests;
+			productReference = DF66256E2F29137000333552 /* RxNoteTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DF6625772F29137000333552 /* RxNoteUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF6625892F29137000333552 /* Build configuration list for PBXNativeTarget "RxNoteUITests" */;
+			buildPhases = (
+				DF6625742F29137000333552 /* Sources */,
+				DF6625752F29137000333552 /* Frameworks */,
+				DF6625762F29137000333552 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF66257A2F29137000333552 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DF66257B2F29137000333552 /* RxNoteUITests */,
+			);
+			name = RxNoteUITests;
+			packageProductDependencies = (
+			);
+			productName = RxNoteUITests;
+			productReference = DF6625782F29137000333552 /* RxNoteUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		DF66258F2F29138300333552 /* RxNoteClips */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF6625B62F29138400333552 /* Build configuration list for PBXNativeTarget "RxNoteClips" */;
+			buildPhases = (
+				DF66258C2F29138300333552 /* Sources */,
+				DF66258D2F29138300333552 /* Frameworks */,
+				DF66258E2F29138300333552 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DF6625912F29138300333552 /* RxNoteClips */,
+			);
+			name = RxNoteClips;
+			packageProductDependencies = (
+				DF6628352F2E327300333552 /* RxNoteCore */,
+			);
+			productName = RxNoteClips;
+			productReference = DF6625902F29138300333552 /* RxNoteClips.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
+		DF6625A02F29138400333552 /* RxNoteClipsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF6625BB2F29138400333552 /* Build configuration list for PBXNativeTarget "RxNoteClipsTests" */;
+			buildPhases = (
+				DF66259D2F29138400333552 /* Sources */,
+				DF66259E2F29138400333552 /* Frameworks */,
+				DF66259F2F29138400333552 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF6625A32F29138400333552 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DF6625A42F29138400333552 /* RxNoteClipsTests */,
+			);
+			name = RxNoteClipsTests;
+			packageProductDependencies = (
+			);
+			productName = RxNoteClipsTests;
+			productReference = DF6625A12F29138400333552 /* RxNoteClipsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DF6625AA2F29138400333552 /* RxNoteClipsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF6625BE2F29138400333552 /* Build configuration list for PBXNativeTarget "RxNoteClipsUITests" */;
+			buildPhases = (
+				DF6625A72F29138400333552 /* Sources */,
+				DF6625A82F29138400333552 /* Frameworks */,
+				DF6625A92F29138400333552 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF6625AD2F29138400333552 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DF6625AE2F29138400333552 /* RxNoteClipsUITests */,
+			);
+			name = RxNoteClipsUITests;
+			packageProductDependencies = (
+			);
+			productName = RxNoteClipsUITests;
+			productReference = DF6625AB2F29138400333552 /* RxNoteClipsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DF6625552F29136F00333552 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					DF66255C2F29136F00333552 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					DF66256D2F29137000333552 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = DF66255C2F29136F00333552;
+					};
+					DF6625772F29137000333552 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = DF66255C2F29136F00333552;
+					};
+					DF66258F2F29138300333552 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					DF6625A02F29138400333552 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = DF66258F2F29138300333552;
+					};
+					DF6625AA2F29138400333552 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = DF66258F2F29138300333552;
+					};
+				};
+			};
+			buildConfigurationList = DF6625582F29136F00333552 /* Build configuration list for PBXProject "RxNote" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DF6625542F29136F00333552;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DF66265F2F2B828600333552 /* XCLocalSwiftPackageReference "packages/RxNoteCore" */,
+				DFE7DB882F49610900018A97 /* XCRemoteSwiftPackageReference "RxAuthSwift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = DF66255E2F29136F00333552 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DF66255C2F29136F00333552 /* RxNote */,
+				DF66256D2F29137000333552 /* RxNoteTests */,
+				DF6625772F29137000333552 /* RxNoteUITests */,
+				DF66258F2F29138300333552 /* RxNoteClips */,
+				DF6625A02F29138400333552 /* RxNoteClipsTests */,
+				DF6625AA2F29138400333552 /* RxNoteClipsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DF66255B2F29136F00333552 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF1A77E42F320CE6000C757A /* TestPlan.xctestplan in Resources */,
+				DF44CB3D2F545C0100A2E4A4 /* icon.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66256C2F29137000333552 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF6625762F29137000333552 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66258E2F29138300333552 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF44CB3E2F545C0100A2E4A4 /* icon.icon in Resources */,
+				DF1A77E52F320CE6000C757A /* TestPlan.xctestplan in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66259F2F29138400333552 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF6625A92F29138400333552 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DF6625592F29136F00333552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66256A2F29137000333552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF6625742F29137000333552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66258C2F29138300333552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF66259D2F29138400333552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF6625A72F29138400333552 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DF6625702F29137000333552 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DF66255C2F29136F00333552 /* RxNote */;
+			targetProxy = DF66256F2F29137000333552 /* PBXContainerItemProxy */;
+		};
+		DF66257A2F29137000333552 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DF66255C2F29136F00333552 /* RxNote */;
+			targetProxy = DF6625792F29137000333552 /* PBXContainerItemProxy */;
+		};
+		DF6625A32F29138400333552 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DF66258F2F29138300333552 /* RxNoteClips */;
+			targetProxy = DF6625A22F29138400333552 /* PBXContainerItemProxy */;
+		};
+		DF6625AD2F29138400333552 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DF66258F2F29138300333552 /* RxNoteClips */;
+			targetProxy = DF6625AC2F29138400333552 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		DF6625822F29137000333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RxNote/RxNote.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_FILE_ACCESS_PICTURE_FOLDER = readonly;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = YES;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RxNote/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DF6625832F29137000333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RxNote/RxNote.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RxNote/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DF6625842F29137000333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = DF66255F2F29136F00333552 /* RxNote */;
+			baseConfigurationReferenceRelativePath = Config/Debug.xcconfig;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		DF6625852F29137000333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = DF66255F2F29136F00333552 /* RxNote */;
+			baseConfigurationReferenceRelativePath = Config/Release.xcconfig;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DF6625872F29137000333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNoteTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RxNote.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RxNote";
+			};
+			name = Debug;
+		};
+		DF6625882F29137000333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNoteTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RxNote.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RxNote";
+			};
+			name = Release;
+		};
+		DF66258A2F29137000333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNoteUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RxNote;
+			};
+			name = Debug;
+		};
+		DF66258B2F29137000333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNoteUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RxNote;
+			};
+			name = Release;
+		};
+		DF6625B72F29138400333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = DF66255F2F29136F00333552 /* RxNote */;
+			baseConfigurationReferenceRelativePath = Config/Debug.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RxNoteClips/RxNoteClips.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RxNoteClips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RxNote;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DF6625B82F29138400333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = DF66255F2F29136F00333552 /* RxNote */;
+			baseConfigurationReferenceRelativePath = Config/Release.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RxNoteClips/RxNoteClips.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RxNoteClips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RxNote;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DF6625BC2F29138400333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote.RxNoteClipsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DF6625BD2F29138400333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote.RxNoteClipsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DF6625BF2F29138400333552 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote.RxNoteClipsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RxNoteClips;
+			};
+			name = Debug;
+		};
+		DF6625C02F29138400333552 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P9KK452K8P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rxlab.RxNote.RxNoteClipsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RxNoteClips;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DF6625582F29136F00333552 /* Build configuration list for PBXProject "RxNote" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF6625842F29137000333552 /* Debug */,
+				DF6625852F29137000333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF6625812F29137000333552 /* Build configuration list for PBXNativeTarget "RxNote" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF6625822F29137000333552 /* Debug */,
+				DF6625832F29137000333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF6625862F29137000333552 /* Build configuration list for PBXNativeTarget "RxNoteTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF6625872F29137000333552 /* Debug */,
+				DF6625882F29137000333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF6625892F29137000333552 /* Build configuration list for PBXNativeTarget "RxNoteUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF66258A2F29137000333552 /* Debug */,
+				DF66258B2F29137000333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF6625B62F29138400333552 /* Build configuration list for PBXNativeTarget "RxNoteClips" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF6625B72F29138400333552 /* Debug */,
+				DF6625B82F29138400333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF6625BB2F29138400333552 /* Build configuration list for PBXNativeTarget "RxNoteClipsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF6625BC2F29138400333552 /* Debug */,
+				DF6625BD2F29138400333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF6625BE2F29138400333552 /* Build configuration list for PBXNativeTarget "RxNoteClipsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF6625BF2F29138400333552 /* Debug */,
+				DF6625C02F29138400333552 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		DF66265F2F2B828600333552 /* XCLocalSwiftPackageReference "packages/RxNoteCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = packages/RxNoteCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DFE7DB882F49610900018A97 /* XCRemoteSwiftPackageReference "RxAuthSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rxtech-lab/RxAuthSwift";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DF6626062F2A54C200333552 /* RxNoteCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RxNoteCore;
+		};
+		DF6626602F2B828600333552 /* RxNoteCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RxNoteCore;
+		};
+		DF6628352F2E327300333552 /* RxNoteCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF66265F2F2B828600333552 /* XCLocalSwiftPackageReference "packages/RxNoteCore" */;
+			productName = RxNoteCore;
+		};
+		DFE7DB892F49610900018A97 /* RxAuthSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFE7DB882F49610900018A97 /* XCRemoteSwiftPackageReference "RxAuthSwift" */;
+			productName = RxAuthSwift;
+		};
+		DFE7DB8B2F49610900018A97 /* RxAuthSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFE7DB882F49610900018A97 /* XCRemoteSwiftPackageReference "RxAuthSwift" */;
+			productName = RxAuthSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = DF6625552F29136F00333552 /* Project object */;
+}

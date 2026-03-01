@@ -1,0 +1,69 @@
+// swift-tools-version: 6.2
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import CompilerPluginSupport
+import PackageDescription
+
+let package = Package(
+    name: "RxNoteCore",
+    platforms: [
+        .iOS(.v18),
+        .macOS(.v15),
+    ],
+    products: [
+        .library(
+            name: "RxNoteCore",
+            targets: ["RxNoteCore"]
+        ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0"),
+        .package(url: "https://github.com/apple/swift-testing.git", branch: "main"),
+        // OpenAPI Generator
+        .package(url: "https://github.com/rxtech-lab/RxAuthSwift.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-openapi-generator.git", from: "1.4.0"),
+        .package(url: "https://github.com/apple/swift-openapi-runtime.git", from: "1.6.0"),
+        .package(url: "https://github.com/apple/swift-openapi-urlsession.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-http-types.git", from: "1.3.0"),
+        // Swift Syntax for macros
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", exact: "604.0.0-prerelease-2026-01-20"),
+    ],
+    targets: [
+        // Macro implementation (compiler plugin)
+        .macro(
+            name: "RxNoteCoreMacros",
+            dependencies: [
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+            ],
+            path: "Sources/RxNoteCoreMacros"
+        ),
+        .target(
+            name: "RxNoteCore",
+            dependencies: [
+                "RxNoteCoreMacros",
+                .product(name: "RxAuthSwift", package: "RxAuthSwift"),
+                .product(name: "RxAuthSwiftUI", package: "RxAuthSwift"),
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+                .product(name: "HTTPTypes", package: "swift-http-types"),
+            ],
+            path: "Sources/RxNoteCore",
+            plugins: [
+                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
+            ]
+        ),
+        .testTarget(
+            name: "RxNoteCoreTests",
+            dependencies: [
+                "RxNoteCore",
+                "RxNoteCoreMacros",
+                .product(name: "Testing", package: "swift-testing"),
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+            ],
+            path: "Tests"
+        ),
+    ]
+)

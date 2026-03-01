@@ -1,0 +1,83 @@
+name: iOS CI
+
+on:
+  push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-ios:
+    name: Build iOS App
+    uses: ./.github/workflows/ios-setup.yml
+    with:
+      job-name: Build iOS App
+      script: ios-build.sh
+      scheme: RxNote
+      configuration: Debug
+      sdk: iphonesimulator
+      artifact-name: ios-build-logs
+      artifact-path: build.log
+      runs-on: self-hosted
+    secrets: inherit
+
+  build-macos:
+    name: Build macOS App
+    uses: ./.github/workflows/ios-setup.yml
+    with:
+      job-name: Build macOS App
+      script: macos-build.sh
+      scheme: RxNote
+      configuration: Debug
+      sdk: macosx
+      runs-on: self-hosted
+      artifact-name: macos-build-logs
+      artifact-path: build-macos.log
+    secrets: inherit
+
+  test:
+    name: Run Tests
+    uses: ./.github/workflows/ios-setup.yml
+    with:
+      runs-on: self-hosted
+      job-name: Run Tests
+      script: ios-test.sh
+      scheme: RxNote
+      configuration: Debug
+      sdk: iphonesimulator
+      artifact-name: test-logs
+      artifact-path: test.log
+      result-bundle-path: test-results.xcresult
+      upload-test-results: true
+    secrets: inherit
+
+  build-app-clips:
+    name: Build App Clips
+    uses: ./.github/workflows/ios-setup.yml
+    with:
+      job-name: Build App Clips
+      script: ios-build.sh
+      scheme: RxNoteClips
+      configuration: Debug
+      sdk: iphonesimulator
+      artifact-name: app-clips-build-logs
+      artifact-path: build.log
+      runs-on: self-hosted
+    secrets: inherit
+
+  ui-tests:
+    name: Run UI Tests
+    uses: ./.github/workflows/ios-setup.yml
+    with:
+      runs-on: self-hosted
+      job-name: Run UI Tests
+      script: ios-ui-test.sh
+      scheme: RxNote
+      configuration: Debug
+      sdk: iphonesimulator
+      artifact-name: ui-test-logs
+      artifact-path: ui-test.log
+      result-bundle-path: ui-test-results.xcresult
+      upload-test-results: true
+    secrets: inherit

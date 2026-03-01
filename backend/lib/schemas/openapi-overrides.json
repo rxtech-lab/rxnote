@@ -1,0 +1,21 @@
+{
+  "ActionSchema": {
+    "type": "object",
+    "discriminator": {
+      "propertyName": "type",
+      "mapping": {
+        "url": "#/components/schemas/URLActionSchema",
+        "wifi": "#/components/schemas/WifiActionSchema"
+      }
+    },
+    "oneOf": [
+      {
+        "$ref": "#/components/schemas/URLActionSchema"
+      },
+      {
+        "$ref": "#/components/schemas/WifiActionSchema"
+      }
+    ],
+    "description": "An action associated with the note"
+  }
+}
