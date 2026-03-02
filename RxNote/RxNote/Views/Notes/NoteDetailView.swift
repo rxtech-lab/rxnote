@@ -35,9 +35,11 @@ struct NoteDetailView: View {
                 if isEditing {
                     NoteEditorView(
                         mode: .edit(noteId: noteId, existing: note),
-                        onSave: { _ in
-                            isEditing = false
-                            Task { await viewModel.fetchNote(id: noteId) }
+                        onSave: { updatedNote in
+                            Task {
+                                await viewModel.fetchNote(id: noteId)
+                                isEditing = false
+                            }
                         },
                         onCancel: {
                             isEditing = false

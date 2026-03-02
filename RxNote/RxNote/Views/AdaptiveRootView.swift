@@ -11,6 +11,9 @@ import SwiftUI
 struct AdaptiveRootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var navigationManager = NavigationManager()
+    
+    /// Binding to pending deep link URL from ContentView (received before auth completed)
+    @Binding var pendingDeepLinkURL: URL?
 
     var body: some View {
         Group {
@@ -35,6 +38,16 @@ struct AdaptiveRootView: View {
         .onOpenURL { url in
             Task {
                 await navigationManager.handleDeepLink(url)
+            }
+        }
+        // Process pending deep link once when view first appears
+        .onAppear {
+            if let url = pendingDeepLinkURL {
+                let urlToProcess = url
+                pendingDeepLinkURL = nil
+                Task {
+                    await navigationManager.handleDeepLink(urlToProcess)
+                }
             }
         }
         .alert("Deep Link Error", isPresented: $navigationManager.showDeepLinkError) {
@@ -62,5 +75,5 @@ struct AdaptiveRootView: View {
 }
 
 #Preview {
-    AdaptiveRootView()
+    AdaptiveRootView(pendingDeepLinkURL: .constant(nil))
 }

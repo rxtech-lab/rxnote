@@ -31,6 +31,7 @@ final class RxNoteClipsUITests: XCTestCase {
         XCTAssertFalse(errorTitle.exists)
 
         XCTAssertFalse(app.appClipsSignInRequired.exists)
+        XCTAssertTrue(app.noteDetailTitle.waitForExistence(timeout: 15), "Note detail should be displayed after sign-in")
     }
 
     func testPrivateNoteRequiresSignIn() throws {
@@ -40,6 +41,9 @@ final class RxNoteClipsUITests: XCTestCase {
         XCTAssertTrue(app.appClipsSignInRequired.waitForExistence(timeout: 10))
 
         try app.signInWithEmailAndPassword(isAppclips: true)
+
+        // Verify note detail is loaded after sign-in
+        XCTAssertTrue(app.noteDetailTitle.waitForExistence(timeout: 15), "Note detail should be displayed after sign-in")
     }
 
     // MARK: - Error Handling Tests

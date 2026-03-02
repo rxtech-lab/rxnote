@@ -11,7 +11,11 @@ import XCTest
 private let logger = Logger(subsystem: "app.rxlab.RxNoteUITests", category: "signin")
 
 extension XCUIApplication {
-    func signInWithEmailAndPassword(isAppclips: Bool = false) throws {
+    /// Sign in with email and password using the OAuth flow
+    /// - Parameters:
+    ///   - isAppclips: Set to true for App Clips (skips notes view check)
+    ///   - expectsDeepLinkNavigation: Set to true when a deep link will navigate away from notes view
+    func signInWithEmailAndPassword(isAppclips: Bool = false, expectsDeepLinkNavigation: Bool = false) throws {
         // Load .env file and read credentials (with fallback to process environment for CI)
         let envVars = DotEnv.loadWithFallback()
 
@@ -89,7 +93,9 @@ extension XCUIApplication {
         logger.info("✅ Sign-in form submitted, waiting for callback...")
 
         // find notes tab (main view after sign in)
-        if !isAppclips {
+        // Skip this check for App Clips - they don't show the Notes list
+        // Skip this check when deep link navigation is expected - app will navigate to note detail
+        if !isAppclips && !expectsDeepLinkNavigation {
             let exist = staticTexts["Notes"].waitForExistence(timeout: 30)
             XCTAssertTrue(exist, "Failed to sign in and reach notes view")
         }

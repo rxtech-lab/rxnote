@@ -195,11 +195,15 @@ struct NoteEditorView: View {
                     }
 
                     if viewModel.isReadOnly {
-                        Button {
-                            onEdit?()
-                        } label: {
-                            Image(systemName: "pencil")
-                                .font(.title3.weight(.medium))
+                        // Only show edit button if onEdit callback is provided
+                        if let onEdit {
+                            Button {
+                                onEdit()
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .font(.title3.weight(.medium))
+                            }
+                            .accessibilityIdentifier("note-detail-edit-button")
                         }
                     } else if viewModel.isSaving {
                         ProgressView()
@@ -209,6 +213,7 @@ struct NoteEditorView: View {
                         } label: {
                             Image(systemName: "checkmark")
                         }
+                        .accessibilityIdentifier("note-save-button")
                         .disabled(!viewModel.canSave || viewModel.hasUploadsInProgress)
                     }
                 }
@@ -272,10 +277,12 @@ struct NoteEditorView: View {
                     Text(viewModel.title)
                         .font(.title.weight(.bold))
                         .padding(.horizontal, 16)
+                        .accessibilityIdentifier("note-detail-title")
                 } else {
                     TextField("Title", text: $viewModel.title, axis: .vertical)
                         .font(.title.weight(.bold))
                         .padding(.horizontal, 16)
+                        .accessibilityIdentifier("note-title-field")
                 }
 
                 // Content
@@ -299,6 +306,7 @@ struct NoteEditorView: View {
                             .scrollContentBackground(.hidden)
                             .padding(.horizontal, 12)
                             .frame(minHeight: 200)
+                            .accessibilityIdentifier("note-content-field")
                     }
                 }
 
@@ -307,6 +315,7 @@ struct NoteEditorView: View {
                     actionButtonsSection
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 12)
         }
         .scrollDismissesKeyboard(.interactively)
@@ -566,11 +575,8 @@ struct NoteEditorView: View {
 
     private func saveNote() async {
         if let note = await viewModel.save() {
-            if let onSave {
-                onSave(note)
-            } else {
-                dismiss()
-            }
+            onSave?(note)
+            dismiss()
         }
     }
 

@@ -96,6 +96,7 @@ struct NoteListView: View {
                 NavigationLink(value: AppDestination.noteDetail(id: note.id)) {
                     NoteRow(note: note)
                 }
+                .accessibilityIdentifier("note-row-\(note.id)")
                     .onAppear {
                         // Load more when reaching near the end
                         if note.id == viewModel.notes.last?.id, viewModel.hasNextPage {

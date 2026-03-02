@@ -23,9 +23,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
             <Package className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Storage Management</CardTitle>
+          <CardTitle className="text-2xl">RxNote</CardTitle>
           <CardDescription>
-            Sign in to access your storage items and manage your inventory
+            Sign in to access your notes and manage your content
           </CardDescription>
         </CardHeader>
         <CardContent>
