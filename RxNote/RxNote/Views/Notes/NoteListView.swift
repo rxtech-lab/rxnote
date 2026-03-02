@@ -41,31 +41,6 @@ struct NoteListView: View {
                 .accessibilityIdentifier("add-note-button")
             }
         }
-        #if os(iOS)
-        .fullScreenCover(isPresented: $showNoteEditor, onDismiss: {
-            if let noteId = pendingNavigationNoteId {
-                pendingNavigationNoteId = nil
-                navigationManager.navigateToNote(id: noteId)
-            }
-        }) {
-            NoteEditorView(mode: .create) { note in
-                Task { await viewModel.fetchNotes() }
-                pendingNavigationNoteId = note.id
-            }
-        }
-        #else
-        .sheet(isPresented: $showNoteEditor, onDismiss: {
-            if let noteId = pendingNavigationNoteId {
-                pendingNavigationNoteId = nil
-                navigationManager.navigateToNote(id: noteId)
-            }
-        }) {
-            NoteEditorView(mode: .create) { note in
-                Task { await viewModel.fetchNotes() }
-                pendingNavigationNoteId = note.id
-            }
-        }
-        #endif
         .alert(
             "Error",
             isPresented: $showingErrorAlert,
@@ -88,6 +63,31 @@ struct NoteListView: View {
         .refreshable {
             await viewModel.fetchNotes()
         }
+        #if os(iOS)
+        .fullScreenCover(isPresented: $showNoteEditor, onDismiss: {
+            if let noteId = pendingNavigationNoteId {
+                pendingNavigationNoteId = nil
+                navigationManager.navigateToNote(id: noteId)
+            }
+        }) {
+            NoteEditorView(mode: .create) { note in
+                Task { await viewModel.fetchNotes() }
+                pendingNavigationNoteId = note.id
+            }
+        }
+        #else
+        .sheet(isPresented: $showNoteEditor, onDismiss: {
+                if let noteId = pendingNavigationNoteId {
+                    pendingNavigationNoteId = nil
+                    navigationManager.navigateToNote(id: noteId)
+                }
+            }) {
+                NoteEditorView(mode: .create) { note in
+                    Task { await viewModel.fetchNotes() }
+                    pendingNavigationNoteId = note.id
+                }
+            }
+        #endif
     }
 
     private var notesList: some View {
@@ -97,14 +97,14 @@ struct NoteListView: View {
                     NoteRow(note: note)
                 }
                 .accessibilityIdentifier("note-row-\(note.id)")
-                    .onAppear {
-                        // Load more when reaching near the end
-                        if note.id == viewModel.notes.last?.id, viewModel.hasNextPage {
-                            Task {
-                                await viewModel.loadMore()
-                            }
+                .onAppear {
+                    // Load more when reaching near the end
+                    if note.id == viewModel.notes.last?.id, viewModel.hasNextPage {
+                        Task {
+                            await viewModel.loadMore()
                         }
                     }
+                }
             }
             .onDelete { indexSet in
                 Task {
@@ -170,7 +170,6 @@ private struct NoteRow: View {
         }
     }
 }
-
 
 #Preview {
     NavigationStack {

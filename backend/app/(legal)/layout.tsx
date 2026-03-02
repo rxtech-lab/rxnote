@@ -1,3 +1,5 @@
+import { ThemeToggle } from "@/components/theme-toggle";
+
 export default function LegalLayout({
   children,
 }: {
@@ -5,7 +7,8 @@ export default function LegalLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <main className="mx-auto max-w-3xl px-6 py-12">{children}</main>
+      <header className="mx-auto max-w-3xl px-6 pt-6 flex justify-end"></header>
+      <main className="mx-auto max-w-3xl px-6 py-8">{children}</main>
     </div>
   );
 }

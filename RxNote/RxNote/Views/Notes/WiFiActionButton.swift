@@ -62,12 +62,29 @@ struct WiFiActionButton: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
-        .foregroundStyle(isConnecting ? Color.secondary : Color.purple)
+        .foregroundStyle(titleColor)
         .disabled(isConnecting)
     }
 
     private var isConnecting: Bool {
         connectionState.isConnecting(ssid: wifiAction.ssid)
+    }
+    
+    private var isConnected: Bool {
+        if case .connected(let connectedSSID) = connectionState {
+            return connectedSSID == wifiAction.ssid
+        }
+        return false
+    }
+    
+    private var titleColor: Color {
+        if isConnecting {
+            return .secondary
+        } else if isConnected {
+            return .green
+        } else {
+            return Color.appAccent
+        }
     }
 
     @ViewBuilder
