@@ -4,8 +4,8 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:note.rxlab.app</string>
-		<string>appclips:note.rxlab.app</string>
+		<string>applinks:rxnote.rxlab.app</string>
+		<string>appclips:rxnote.rxlab.app</string>
 	</array>
 	<key>com.apple.developer.parent-application-identifiers</key>
 	<array>

@@ -35,8 +35,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <strong className="font-semibold">{children}</strong>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="mt-4 border-l-2 pl-6 italic">{children}</blockquote>
+      <blockquote className="mt-4 border-l-2 border-border pl-6 italic text-muted-foreground">
+        {children}
+      </blockquote>
     ),
+    hr: () => <hr className="my-8 border-border" />,
     ...components,
   };
 }

@@ -10,6 +10,31 @@ import PhotosUI
 import RxNoteCore
 import SwiftUI
 
+// MARK: - App Theme Color
+
+extension Color {
+    static var appAccent: Color {
+        Color(light: Color(red: 0.506, green: 0.220, blue: 0.820),
+              dark: Color(red: 0.720, green: 0.520, blue: 0.780))
+    }
+
+    init(light: Color, dark: Color) {
+        #if os(iOS)
+        self.init(uiColor: UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+                ? UIColor(dark)
+                : UIColor(light)
+        })
+        #else
+        self.init(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .vibrantDark]) != nil
+                ? NSColor(dark)
+                : NSColor(light)
+        })
+        #endif
+    }
+}
+
 struct NoteEditorView: View {
     let mode: NoteEditorMode
     let onSave: ((Note) -> Void)?
@@ -48,13 +73,14 @@ struct NoteEditorView: View {
                 Task { await handlePhotoSelection(items) }
                 selectedPhotoItems = []
             }
-            #if os(iOS)
+            .scrollDismissesKeyboard(.interactively)
+        #if os(iOS)
             .sheet(isPresented: $showCamera) {
                 CameraPickerView { image in
                     Task { await handleCameraCapture(image) }
                 }
             }
-            #endif
+        #endif
             .sheet(isPresented: $showLocationPicker) {
                 LocationPickerView(
                     latitude: viewModel.latitude,
@@ -85,15 +111,15 @@ struct NoteEditorView: View {
                     Text(error.localizedDescription)
                 }
             }
-            #if os(iOS)
+        #if os(iOS)
             .fullScreenCover(item: $fullscreenImageURL) { url in
                 FullscreenImageView(imageURL: url)
             }
-            #else
+        #else
             .sheet(item: $fullscreenImageURL) { url in
                 FullscreenImageView(imageURL: url)
             }
-            #endif
+        #endif
     }
 
     // MARK: - Navigation Wrapper
@@ -116,108 +142,108 @@ struct NoteEditorView: View {
 
     private var editorWithToolbar: some View {
         editorContent
-            #if os(iOS)
-            .background(Color(.systemBackground))
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
+        #if os(iOS)
+        .background(Color(.systemBackground))
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        .toolbar {
+            if !viewModel.isReadOnly {
+                ToolbarItem(placement: .navigation) {
+                    Button {
+                        if let onCancel {
+                            onCancel()
+                        } else {
+                            dismiss()
+                        }
+                    } label: {
+                        Label("Cancel", systemImage: "xmark")
+                    }
+                }
+                #if os(iOS)
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Spacer()
+
+                    PhotosPicker(
+                        selection: $selectedPhotoItems,
+                        maxSelectionCount: 5,
+                        matching: .images
+                    ) {
+                        Image(systemName: "photo.on.rectangle")
+                    }
+
+                    Button { showCamera = true } label: {
+                        Image(systemName: "camera")
+                    }
+
+                    Button { showLocationPicker = true } label: {
+                        Image(systemName: viewModel.latitude != nil ? "location.fill" : "location")
+                    }
+
+                    Button { actionSheetMode = .create } label: {
+                        Image(systemName: "link.badge.plus")
+                    }
+
+                    Spacer()
+                }
+                #else
+                ToolbarItemGroup(placement: .secondaryAction) {
+                    PhotosPicker(
+                        selection: $selectedPhotoItems,
+                        maxSelectionCount: 5,
+                        matching: .images
+                    ) {
+                        Label("Add Photos", systemImage: "photo.on.rectangle")
+                    }
+
+                    Button { showLocationPicker = true } label: {
+                        Label("Add Location", systemImage: viewModel.latitude != nil ? "location.fill" : "location")
+                    }
+
+                    Button { actionSheetMode = .create } label: {
+                        Label("Add Action", systemImage: "link.badge.plus")
+                    }
+                }
+                #endif
+            }
+
+            ToolbarItemGroup(placement: .primaryAction) {
                 if !viewModel.isReadOnly {
-                    ToolbarItem(placement: .navigation) {
-                        Button {
-                            if let onCancel {
-                                onCancel()
-                            } else {
-                                dismiss()
-                            }
-                        } label: {
-                            Label("Cancel", systemImage: "xmark")
-                        }
+                    Button {
+                        showVisibilityPicker = true
+                    } label: {
+                        Label(viewModel.visibility.displayName, systemImage: viewModel.visibility.systemImage)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
-                    #if os(iOS)
-                    ToolbarItemGroup(placement: .bottomBar) {
-                        Spacer()
-
-                        PhotosPicker(
-                            selection: $selectedPhotoItems,
-                            maxSelectionCount: 5,
-                            matching: .images
-                        ) {
-                            Image(systemName: "photo.on.rectangle")
-                        }
-
-                        Button { showCamera = true } label: {
-                            Image(systemName: "camera")
-                        }
-
-                        Button { showLocationPicker = true } label: {
-                            Image(systemName: viewModel.latitude != nil ? "location.fill" : "location")
-                        }
-
-                        Button { actionSheetMode = .create } label: {
-                            Image(systemName: "link.badge.plus")
-                        }
-
-                        Spacer()
+                    .popover(isPresented: $showVisibilityPicker) {
+                        visibilityPicker
                     }
-                    #else
-                    ToolbarItemGroup(placement: .secondaryAction) {
-                        PhotosPicker(
-                            selection: $selectedPhotoItems,
-                            maxSelectionCount: 5,
-                            matching: .images
-                        ) {
-                            Label("Add Photos", systemImage: "photo.on.rectangle")
-                        }
-
-                        Button { showLocationPicker = true } label: {
-                            Label("Add Location", systemImage: viewModel.latitude != nil ? "location.fill" : "location")
-                        }
-
-                        Button { actionSheetMode = .create } label: {
-                            Label("Add Action", systemImage: "link.badge.plus")
-                        }
-                    }
-                    #endif
                 }
 
-                ToolbarItemGroup(placement: .primaryAction) {
-                    if !viewModel.isReadOnly {
+                if viewModel.isReadOnly {
+                    // Only show edit button if onEdit callback is provided
+                    if let onEdit {
                         Button {
-                            showVisibilityPicker = true
+                            onEdit()
                         } label: {
-                            Label(viewModel.visibility.displayName, systemImage: viewModel.visibility.systemImage)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            Image(systemName: "pencil")
+                                .font(.title3.weight(.medium))
                         }
-                        .popover(isPresented: $showVisibilityPicker) {
-                            visibilityPicker
-                        }
+                        .accessibilityIdentifier("note-detail-edit-button")
                     }
-
-                    if viewModel.isReadOnly {
-                        // Only show edit button if onEdit callback is provided
-                        if let onEdit {
-                            Button {
-                                onEdit()
-                            } label: {
-                                Image(systemName: "pencil")
-                                    .font(.title3.weight(.medium))
-                            }
-                            .accessibilityIdentifier("note-detail-edit-button")
-                        }
-                    } else if viewModel.isSaving {
-                        ProgressView()
-                    } else {
-                        Button {
-                            Task { await saveNote() }
-                        } label: {
-                            Image(systemName: "checkmark")
-                        }
-                        .accessibilityIdentifier("note-save-button")
-                        .disabled(!viewModel.canSave || viewModel.hasUploadsInProgress)
+                } else if viewModel.isSaving {
+                    ProgressView()
+                } else {
+                    Button {
+                        Task { await saveNote() }
+                    } label: {
+                        Image(systemName: "checkmark")
                     }
+                    .accessibilityIdentifier("note-save-button")
+                    .disabled(!viewModel.canSave || viewModel.hasUploadsInProgress)
                 }
             }
+        }
     }
 
     // MARK: - Visibility Picker
@@ -234,7 +260,7 @@ struct NoteEditorView: View {
                         Spacer()
                         if viewModel.visibility == vis {
                             Image(systemName: "checkmark")
-                                .foregroundStyle(.purple)
+                                .foregroundStyle(Color.appAccent)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -373,7 +399,7 @@ struct NoteEditorView: View {
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             ))) {
                 Marker("", coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
-                    .tint(.purple)
+                    .tint(Color.appAccent)
             }
             .frame(height: 150)
             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -482,32 +508,36 @@ struct NoteEditorView: View {
     // MARK: - Actions Section
 
     private var actionsSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 12) {
             ForEach(Array(viewModel.actions.enumerated()), id: \.offset) { index, action in
                 HStack {
                     actionLabel(action)
+                        .foregroundStyle(Color.appAccent)
                     Spacer()
-                    if !viewModel.isReadOnly {
-                        Button {
-                            actionSheetMode = .edit(index: index, action: viewModel.actions[index])
-                        } label: {
-                            Image(systemName: "pencil")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Button {
-                            viewModel.removeAction(at: index)
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                    Button {
+                        actionSheetMode = .edit(index: index, action: viewModel.actions[index])
+                    } label: {
+                        Image(systemName: "pencil")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    Button {
+                        viewModel.removeAction(at: index)
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.callout)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .black.opacity(0.6))
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .background(Color(.secondarySystemFill))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .padding(.vertical, 14)
+                #if os(iOS)
+                .background(Color(.secondarySystemBackground))
+                #else
+                .background(Color(NSColor.controlBackgroundColor))
+                #endif
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding(.horizontal, 16)
@@ -518,10 +548,10 @@ struct NoteEditorView: View {
         switch action {
         case let .url(urlAction):
             Label(urlAction.label, systemImage: "link")
-                .font(.subheadline)
+                .font(.body.weight(.medium))
         case let .wifi(wifiAction):
             Label(wifiAction.ssid, systemImage: "wifi")
-                .font(.subheadline)
+                .font(.body.weight(.medium))
         }
     }
 
@@ -557,14 +587,14 @@ struct NoteEditorView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
                     #if os(iOS)
-                    .background(Color(.secondarySystemBackground))
+                        .background(Color(.secondarySystemBackground))
                     #else
-                    .background(Color(NSColor.controlBackgroundColor))
+                        .background(Color(NSColor.controlBackgroundColor))
                     #endif
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(.purple)
+                .foregroundStyle(Color.appAccent)
             }
         case let .wifi(wifiAction):
             WiFiActionButton(wifiAction: wifiAction, connectionState: $wifiConnectionState)
@@ -576,7 +606,11 @@ struct NoteEditorView: View {
     private func saveNote() async {
         if let note = await viewModel.save() {
             onSave?(note)
-            dismiss()
+            // Only dismiss if not in inline mode (detail view)
+            // When onCancel is provided, the parent view handles navigation
+            if !isInline {
+                dismiss()
+            }
         }
     }
 
@@ -654,3 +688,37 @@ extension String: @retroactive Identifiable {
     )
     NoteEditorView(mode: .view(noteId: 1, existing: sampleNote))
 }
+#Preview("Edit Mode") {
+    let sampleNote = NoteDetail(
+        id: 1,
+        userId: "user-1",
+        _type: .regular_hyphen_text_hyphen_note,
+        title: "Meeting Room WiFi",
+        note: "Connect to the guest network using the credentials below.",
+        images: [],
+        audios: [],
+        videos: [],
+        latitude: 37.7749,
+        longitude: -122.4194,
+        actions: [
+            .url(.init(
+                _type: .url,
+                label: "Company Website",
+                url: "https://example.com"
+            )),
+            .wifi(.init(
+                _type: .wifi,
+                ssid: "GuestNetwork",
+                password: "welcome123",
+                encryption: .WPA
+            ))
+        ],
+        visibility: ._public,
+        previewUrl: "https://example.com/preview/1",
+        createdAt: Date(),
+        updatedAt: Date(),
+        whitelist: []
+    )
+    NoteEditorView(mode: .edit(noteId: 1, existing: sampleNote))
+}
+
