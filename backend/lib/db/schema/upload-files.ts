@@ -9,7 +9,7 @@ export const uploadFiles = sqliteTable("upload_files", {
   filename: text("filename").notNull(),
   contentType: text("content_type").notNull(),
   size: integer("size").notNull(), // bytes
-  noteId: integer("note_id").references(() => notes.id, { onDelete: "set null" }),
+  noteId: text("note_id").references(() => notes.id, { onDelete: "set null" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

@@ -9,7 +9,7 @@ test.describe.serial("Permission Tests", () => {
   const USER_1 = `test-user-1-${crypto.randomUUID()}`;
   const USER_2 = `test-user-2-${crypto.randomUUID()}`;
 
-  let user1NoteId: number;
+  let user1NoteId: string;
 
   test.describe("User 1 creates resources", () => {
     test("should create private note", async ({ request }) => {
@@ -136,12 +136,12 @@ test.describe.serial("Multi-User Note Isolation", () => {
   const USER_C_EMAIL = `user-c-${crypto.randomUUID()}@example.com`;
 
   // Track created note IDs
-  let userAPrivateNote1Id: number;
-  let userAPrivateNote2Id: number;
-  let userAPublicNoteId: number;
-  let userBPrivateNoteId: number;
-  let userBPublicNoteId: number;
-  let userCPrivateNoteId: number;
+  let userAPrivateNote1Id: string;
+  let userAPrivateNote2Id: string;
+  let userAPublicNoteId: string;
+  let userBPrivateNoteId: string;
+  let userBPublicNoteId: string;
+  let userCPrivateNoteId: string;
 
   test.describe("Setup - Create notes for multiple users", () => {
     test("User A creates 2 private notes and 1 public note", async ({ request }) => {

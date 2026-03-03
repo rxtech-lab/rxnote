@@ -9,7 +9,7 @@ async function seed() {
     .insert(notes)
     .values([
       {
-        id: 1,
+        id: "seed-public",
         userId: "test-user-id", // default test user
         title: "Public Test Note",
         note: "This is a public test note for E2E testing",
@@ -18,7 +18,7 @@ async function seed() {
         updatedAt: now,
       },
       {
-        id: 2,
+        id: "seed-private",
         userId: "b8da73c7-eb56-46a2-a20a-385d298dfa97", // different user for access control testing
         title: "Private Test Note",
         note: "This is a private test note for E2E testing",
@@ -27,7 +27,7 @@ async function seed() {
         updatedAt: now,
       },
       {
-        id: 3,
+        id: "seed-other-user",
         userId: "different-id", // different user for access control testing
         title: "Another User's Note",
         note: "This note belongs to another user",

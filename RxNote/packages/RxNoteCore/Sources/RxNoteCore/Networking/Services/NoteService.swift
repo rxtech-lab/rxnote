@@ -22,13 +22,13 @@ public protocol NoteServiceProtocol: Sendable {
     func createNote(_ input: NoteInsert) async throws -> Note
 
     /// Get a note by ID
-    func getNote(id: Int) async throws -> NoteDetail
+    func getNote(id: String) async throws -> NoteDetail
 
     /// Update a note by ID
-    func updateNote(id: Int, input: NoteUpdate) async throws -> Note
+    func updateNote(id: String, input: NoteUpdate) async throws -> Note
 
     /// Delete a note by ID
-    func deleteNote(id: Int) async throws
+    func deleteNote(id: String) async throws
 }
 
 // MARK: - Implementation
@@ -64,18 +64,18 @@ public struct NoteService: NoteServiceProtocol {
     }
 
     @APICall(.ok)
-    public func getNote(id: Int) async throws -> NoteDetail {
-        try await StorageAPIClient.shared.client.getNote(.init(path: .init(id: String(id))))
+    public func getNote(id: String) async throws -> NoteDetail {
+        try await StorageAPIClient.shared.client.getNote(.init(path: .init(id: id)))
     }
 
     @APICall(.ok)
-    public func updateNote(id: Int, input: NoteUpdate) async throws -> Note {
-        try await StorageAPIClient.shared.client.updateNote(.init(path: .init(id: String(id)), body: .json(input)))
+    public func updateNote(id: String, input: NoteUpdate) async throws -> Note {
+        try await StorageAPIClient.shared.client.updateNote(.init(path: .init(id: id), body: .json(input)))
     }
 
-    public func deleteNote(id: Int) async throws {
+    public func deleteNote(id: String) async throws {
         let response = try await StorageAPIClient.shared.client.deleteNote(
-            .init(path: .init(id: String(id)))
+            .init(path: .init(id: id))
         )
 
         switch response {

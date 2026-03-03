@@ -17,7 +17,7 @@ import {
   disassociateFilesFromNote,
   deleteFilesForNote,
 } from "./file-actions";
-import { parseFileIds } from "@/lib/utils/file-utils";
+import { parseFileIds, isFileId } from "@/lib/utils/file-utils";
 import {
   type PaginationParams,
   type PaginatedResult,
@@ -33,6 +33,18 @@ export interface NoteFilters {
 }
 
 export interface PaginatedNoteFilters extends NoteFilters, PaginationParams {}
+
+function isValidBusinessCard(
+  businessCard: NewNote["businessCard"] | null | undefined,
+): businessCard is NonNullable<NewNote["businessCard"]> {
+  return Boolean(
+    businessCard
+      && typeof businessCard.firstName === "string"
+      && businessCard.firstName.trim().length > 0
+      && typeof businessCard.lastName === "string"
+      && businessCard.lastName.trim().length > 0,
+  );
+}
 
 export async function getNotes(
   userId?: string,
@@ -71,7 +83,7 @@ export async function getNotes(
     .orderBy(desc(notes.updatedAt));
 }
 
-export async function getNote(id: number): Promise<Note | undefined> {
+export async function getNote(id: string): Promise<Note | undefined> {
   await ensureSchemaInitialized();
   const results = await db
     .select()
@@ -104,6 +116,13 @@ export async function createNoteAction(
 
     // Validate file IDs across all media arrays
     const allFileRefs = [...images, ...audios, ...videos];
+
+    // Include business card image in file validation
+    const bcImageUrl = data.businessCard?.imageUrl;
+    if (bcImageUrl && isFileId(bcImageUrl)) {
+      allFileRefs.push(bcImageUrl);
+    }
+
     const fileIds = parseFileIds(allFileRefs);
     if (fileIds.length > 0) {
       const ownershipResult = await validateFileOwnership(fileIds, resolvedUserId);
@@ -117,11 +136,31 @@ export async function createNoteAction(
     }
 
     const now = new Date();
+    const noteType = data.type || "regular-text-note" as const;
+    let businessCard = data.businessCard ?? null;
+
+    if (noteType === "business-card") {
+      if (!isValidBusinessCard(businessCard)) {
+        return {
+          success: false,
+          error: "Business card notes require firstName and lastName",
+        };
+      }
+      // Strip imageFileId from stored data (it's response-only)
+      if (businessCard) {
+        const { imageFileId: _, ...bcData } = businessCard as unknown as Record<string, unknown>;
+        businessCard = bcData as unknown as typeof businessCard;
+      }
+    } else {
+      businessCard = null;
+    }
+
     const insertData = {
       userId: resolvedUserId,
-      type: data.type || "regular-text-note" as const,
+      type: noteType,
       title: data.title,
       note: data.note || null,
+      businessCard,
       images,
       audios,
       videos,
@@ -150,7 +189,7 @@ export async function createNoteAction(
 }
 
 export async function updateNoteAction(
-  id: number,
+  id: string,
   data: Partial<Omit<NewNote, "id" | "userId" | "createdAt" | "updatedAt">>,
   userId?: string,
 ): Promise<{ success: boolean; data?: Note; error?: string }> {
@@ -167,7 +206,14 @@ export async function updateNoteAction(
     }
 
     const existing = await db
-      .select({ userId: notes.userId, images: notes.images, audios: notes.audios, videos: notes.videos })
+      .select({
+        userId: notes.userId,
+        type: notes.type,
+        businessCard: notes.businessCard,
+        images: notes.images,
+        audios: notes.audios,
+        videos: notes.videos,
+      })
       .from(notes)
       .where(eq(notes.id, id))
       .limit(1);
@@ -201,9 +247,57 @@ export async function updateNoteAction(
       }
     }
 
+    // Handle business card image file changes
+    if (data.businessCard !== undefined) {
+      const newBcImageUrl = data.businessCard?.imageUrl;
+      const oldBcImageUrl = (existing[0].businessCard as unknown as Record<string, unknown> | null)?.imageUrl as string | undefined;
+      const newBcFileIds = newBcImageUrl && isFileId(newBcImageUrl) ? parseFileIds([newBcImageUrl]) : [];
+      const oldBcFileIds = oldBcImageUrl && isFileId(oldBcImageUrl) ? parseFileIds([oldBcImageUrl]) : [];
+      const addedBcFileIds = newBcFileIds.filter((fid) => !oldBcFileIds.includes(fid));
+      const removedBcFileIds = oldBcFileIds.filter((fid) => !newBcFileIds.includes(fid));
+
+      if (addedBcFileIds.length > 0) {
+        const ownershipResult = await validateFileOwnership(addedBcFileIds, resolvedUserId);
+        if (!ownershipResult.valid) {
+          return { success: false, error: ownershipResult.error };
+        }
+        const s3Result = await validateFilesExistInS3(addedBcFileIds);
+        if (!s3Result.valid) {
+          return { success: false, error: s3Result.error };
+        }
+        await associateFilesWithNote(addedBcFileIds, id, resolvedUserId);
+      }
+      if (removedBcFileIds.length > 0) {
+        await disassociateFilesFromNote(removedBcFileIds);
+      }
+    }
+
+    const updateData = { ...data, updatedAt: new Date() };
+
+    const nextType = data.type ?? existing[0].type;
+    const nextBusinessCard = data.businessCard !== undefined
+      ? data.businessCard
+      : existing[0].businessCard;
+
+    if (nextType === "business-card") {
+      if (!isValidBusinessCard(nextBusinessCard)) {
+        return {
+          success: false,
+          error: "Business card notes require firstName and lastName",
+        };
+      }
+      // Strip imageFileId from stored data (it's response-only)
+      if (updateData.businessCard) {
+        const { imageFileId: _, ...bcData } = updateData.businessCard as unknown as Record<string, unknown>;
+        updateData.businessCard = bcData as unknown as typeof updateData.businessCard;
+      }
+    } else {
+      updateData.businessCard = null;
+    }
+
     await db
       .update(notes)
-      .set({ ...data, updatedAt: new Date() })
+      .set(updateData)
       .where(eq(notes.id, id));
 
     revalidatePath("/");
@@ -222,7 +316,7 @@ export async function updateNoteAction(
 }
 
 export async function deleteNoteAction(
-  id: number,
+  id: string,
   userId?: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {

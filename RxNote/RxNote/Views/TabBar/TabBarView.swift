@@ -100,14 +100,13 @@ struct TabBarView: View {
         }
     }
 
-    private func extractNoteId(from urlString: String) -> Int? {
+    private func extractNoteId(from urlString: String) -> String? {
         guard let url = URL(string: urlString) else { return nil }
         let components = url.pathComponents
         if let notesIndex = components.firstIndex(of: "notes"),
-           notesIndex + 1 < components.count,
-           let id = Int(components[notesIndex + 1])
+           notesIndex + 1 < components.count
         {
-            return id
+            return components[notesIndex + 1]
         }
         return nil
     }

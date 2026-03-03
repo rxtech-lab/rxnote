@@ -467,3 +467,33 @@ export async function signImagesArrayWithIds(
     url: r.signedUrl,
   }));
 }
+
+/**
+ * Sign a business card's imageUrl field and populate imageFileId.
+ * Returns a new businessCard object with signed imageUrl and imageFileId,
+ * or the original if no image to sign.
+ */
+export async function signBusinessCardImage<
+  T extends { imageUrl?: string | null; imageFileId?: number | null },
+>(businessCard: T | null | undefined): Promise<T | null> {
+  if (!businessCard) return null;
+  if (!businessCard.imageUrl || !isFileId(businessCard.imageUrl)) {
+    return { ...businessCard, imageUrl: null, imageFileId: null };
+  }
+
+  const fileId = parseInt(businessCard.imageUrl.substring(5), 10);
+  if (isNaN(fileId)) {
+    return { ...businessCard, imageUrl: null, imageFileId: null };
+  }
+
+  const signed = await signImagesArrayWithIds([businessCard.imageUrl]);
+  if (signed.length === 0) {
+    return { ...businessCard, imageUrl: null, imageFileId: null };
+  }
+
+  return {
+    ...businessCard,
+    imageUrl: signed[0].url,
+    imageFileId: signed[0].id,
+  };
+}

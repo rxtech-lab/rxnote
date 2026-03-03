@@ -11,7 +11,7 @@ final class RxNoteDeepLinkTests: XCTestCase {
     // MARK: - Public Note Deep Link
 
     func testDeepLinkToPublicNote() throws {
-        let app = launchAppWithDeepLink(noteId: 1)
+        let app = launchAppWithDeepLink(noteId: "seed-public")
         try app.signInWithEmailAndPassword(expectsDeepLinkNavigation: true)
 
         // Wait for note detail to load
@@ -22,7 +22,7 @@ final class RxNoteDeepLinkTests: XCTestCase {
     // MARK: - Private Note Deep Link (accessible)
 
     func testDeepLinkToPrivateNote() throws {
-        let app = launchAppWithDeepLink(noteId: 2)
+        let app = launchAppWithDeepLink(noteId: "seed-private")
         try app.signInWithEmailAndPassword(expectsDeepLinkNavigation: true)
 
         // Wait for note detail to load after sign-in
@@ -33,7 +33,7 @@ final class RxNoteDeepLinkTests: XCTestCase {
     // MARK: - Private Note Deep Link (access denied)
 
     func testDeepLinkToPrivateNoteBelongsToOthers() throws {
-        let app = launchAppWithDeepLink(noteId: 3)
+        let app = launchAppWithDeepLink(noteId: "seed-other-user")
         try app.signInWithEmailAndPassword(expectsDeepLinkNavigation: true)
 
         // Deep link navigates to note detail, but note fetch fails with access denied
@@ -55,7 +55,7 @@ final class RxNoteDeepLinkTests: XCTestCase {
     // MARK: - Non-existent Note Deep Link
 
     func testDeepLinkNonExistentNote() throws {
-        let app = launchAppWithDeepLink(noteId: 999999)
+        let app = launchAppWithDeepLink(noteId: "nonexistent-id")
         try app.signInWithEmailAndPassword(expectsDeepLinkNavigation: true)
 
         // Should show an error alert

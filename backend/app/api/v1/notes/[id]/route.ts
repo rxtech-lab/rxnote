@@ -6,7 +6,7 @@ import {
   deleteNoteAction,
 } from "@/lib/actions/note-actions";
 import { getNoteWhitelist, isEmailWhitelistedForNote } from "@/lib/actions/note-whitelist-actions";
-import { signImagesArrayWithIds } from "@/lib/actions/s3-upload-actions";
+import { signImagesArrayWithIds, signBusinessCardImage } from "@/lib/actions/s3-upload-actions";
 import {
   NoteDetailResponseSchema,
   NoteResponseSchema,
@@ -28,8 +28,7 @@ interface RouteParams {
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
-  const noteId = parseInt(id);
-  const note = await getNote(noteId);
+  const note = await getNote(id);
 
   if (!note) {
     return NextResponse.json({ error: "Note not found" }, { status: 404 });
@@ -54,7 +53,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // Private: owner or whitelisted user only
   if (note.userId !== session.user.id) {
     if (session.user.email) {
-      const whitelisted = await isEmailWhitelistedForNote(noteId, session.user.email);
+      const whitelisted = await isEmailWhitelistedForNote(id, session.user.email);
       if (!whitelisted) {
         return NextResponse.json({ error: "Permission denied" }, { status: 403 });
       }
@@ -72,7 +71,7 @@ async function buildNoteResponse(
 ) {
   const previewUrl = `${process.env.NEXT_PUBLIC_URL}/preview/note?id=${note.id}`;
 
-  const [images, whitelist] = await Promise.all([
+  const [images, whitelist, businessCard] = await Promise.all([
     note.images && (note.images as string[]).length > 0
       ? signImagesArrayWithIds(note.images as string[])
       : Promise.resolve([]),
@@ -80,10 +79,12 @@ async function buildNoteResponse(
     userId && note.userId === userId
       ? getNoteWhitelist(note.id)
       : Promise.resolve(undefined),
+    signBusinessCardImage(note.businessCard as Record<string, unknown> | null),
   ]);
 
   const responseData = {
     ...note,
+    businessCard,
     images,
     audios: (note.audios as string[]) || [],
     videos: (note.videos as string[]) || [],
@@ -125,18 +126,21 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
   try {
     const body = await request.json();
-    const result = await updateNoteAction(parseInt(id), body, session.user.id);
+    const result = await updateNoteAction(id, body, session.user.id);
 
     if (result.success && result.data) {
       const previewUrl = `${process.env.NEXT_PUBLIC_URL}/preview/note?id=${result.data.id}`;
 
-      const images =
+      const [images, businessCard] = await Promise.all([
         result.data.images && (result.data.images as string[]).length > 0
-          ? await signImagesArrayWithIds(result.data.images as string[])
-          : [];
+          ? signImagesArrayWithIds(result.data.images as string[])
+          : Promise.resolve([]),
+        signBusinessCardImage(result.data.businessCard as Record<string, unknown> | null),
+      ]);
 
       const responseData = {
         ...result.data,
+        businessCard,
         images,
         audios: (result.data.audios as string[]) || [],
         videos: (result.data.videos as string[]) || [],
@@ -176,7 +180,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   }
 
   const { id } = await params;
-  const result = await deleteNoteAction(parseInt(id), session.user.id);
+  const result = await deleteNoteAction(id, session.user.id);
 
   if (result.success) {
     return new NextResponse(null, { status: 204 });

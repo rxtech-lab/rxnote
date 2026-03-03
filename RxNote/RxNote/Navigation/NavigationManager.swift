@@ -23,7 +23,7 @@ enum DeepLinkError: LocalizedError {
 
 /// Navigation destinations for NavigationStack
 enum AppDestination: Hashable {
-    case noteDetail(id: Int)
+    case noteDetail(id: String)
     case webPage(WebPage)
 }
 
@@ -56,7 +56,7 @@ final class NavigationManager {
     // MARK: - Detail Selection State
 
     /// Selected note ID for detail view (iPad split view)
-    var selectedNoteId: Int?
+    var selectedNoteId: String?
 
     // MARK: - Navigation Paths (for NavigationStack in TabView)
 
@@ -83,7 +83,7 @@ final class NavigationManager {
     // MARK: - Navigation Methods
 
     /// Navigate to a note by its ID
-    func navigateToNote(id: Int) {
+    func navigateToNote(id: String) {
         if selectedTab != .notes {
             selectedTab = .notes
         }
@@ -138,15 +138,14 @@ final class NavigationManager {
 
     // MARK: - Helpers
 
-    /// Extract note ID from a URL path like /api/v1/notes/123
-    private func extractNoteId(from urlString: String) -> Int? {
+    /// Extract note ID from a URL path like /api/v1/notes/{id}
+    private func extractNoteId(from urlString: String) -> String? {
         guard let url = URL(string: urlString) else { return nil }
         let components = url.pathComponents
         if let notesIndex = components.firstIndex(of: "notes"),
-           notesIndex + 1 < components.count,
-           let id = Int(components[notesIndex + 1])
+           notesIndex + 1 < components.count
         {
-            return id
+            return components[notesIndex + 1]
         }
         return nil
     }

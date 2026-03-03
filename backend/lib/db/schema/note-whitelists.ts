@@ -4,7 +4,7 @@ import { notes } from "./notes";
 
 export const noteWhitelists = sqliteTable("note_whitelists", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  noteId: integer("note_id")
+  noteId: text("note_id")
     .notNull()
     .references(() => notes.id, { onDelete: "cascade" }),
   email: text("email").notNull(),

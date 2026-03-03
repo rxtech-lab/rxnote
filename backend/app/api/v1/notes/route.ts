@@ -6,7 +6,7 @@ import {
   type NoteFilters,
   type PaginatedNoteFilters,
 } from "@/lib/actions/note-actions";
-import { signImagesArrayWithIds } from "@/lib/actions/s3-upload-actions";
+import { signImagesArrayWithIds, signBusinessCardImage } from "@/lib/actions/s3-upload-actions";
 import { parsePaginationParams } from "@/lib/utils/pagination";
 import { PaginatedNotesResponse, NoteResponseSchema } from "@/lib/schemas/notes";
 
@@ -58,8 +58,12 @@ export async function GET(request: NextRequest) {
         note.images && (note.images as string[]).length > 0
           ? await signImagesArrayWithIds(note.images as string[])
           : [];
+      const businessCard = await signBusinessCardImage(
+        note.businessCard as Record<string, unknown> | null
+      );
       return {
         ...note,
+        businessCard,
         images,
         audios: (note.audios as string[]) || [],
         videos: (note.videos as string[]) || [],
@@ -105,9 +109,13 @@ export async function POST(request: NextRequest) {
           : [];
 
       const previewUrl = `${process.env.NEXT_PUBLIC_URL}/preview/note?id=${result.data.id}`;
+      const businessCard = await signBusinessCardImage(
+        result.data.businessCard as Record<string, unknown> | null
+      );
 
       const response = NoteResponseSchema.parse({
         ...result.data,
+        businessCard,
         images,
         audios: (result.data.audios as string[]) || [],
         videos: (result.data.videos as string[]) || [],

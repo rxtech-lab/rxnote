@@ -27,7 +27,7 @@ public final class NoteDetailViewModel {
     }
 
     /// Fetch note detail by ID
-    public func fetchNote(id: Int) async {
+    public func fetchNote(id: String) async {
         isLoading = true
         error = nil
         do {
@@ -39,7 +39,7 @@ public final class NoteDetailViewModel {
     }
 
     /// Update a note and return the updated note summary
-    public func updateNote(id: Int, input: NoteUpdate) async -> Note? {
+    public func updateNote(id: String, input: NoteUpdate) async -> Note? {
         error = nil
         do {
             let updated = try await service.updateNote(id: id, input: input)

@@ -10,7 +10,7 @@ import SwiftUI
 
 /// Displays the full detail of a note using NoteEditorView in view or edit mode
 struct NoteDetailView: View {
-    let noteId: Int
+    let noteId: String
 
     @State private var viewModel = NoteDetailViewModel()
     @State private var showingErrorAlert = false
@@ -186,7 +186,7 @@ struct NoteDetailView: View {
 
 #Preview {
     NavigationStack {
-        NoteDetailView(noteId: 1)
+        NoteDetailView(noteId: "1")
             .navigationDestination(for: AppDestination.self) { destination in
                 switch destination {
                 case .noteDetail(let id):

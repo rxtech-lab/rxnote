@@ -14,7 +14,7 @@ struct NoteListView: View {
     @State private var viewModel = NoteListViewModel()
     @State private var showNoteEditor = false
     @State private var showingErrorAlert = false
-    @State private var pendingNavigationNoteId: Int?
+    @State private var pendingNavigationNoteId: String?
 
     var body: some View {
         Group {
@@ -70,9 +70,11 @@ struct NoteListView: View {
                 navigationManager.navigateToNote(id: noteId)
             }
         }) {
-            NoteEditorView(mode: .create) { note in
-                Task { await viewModel.fetchNotes() }
-                pendingNavigationNoteId = note.id
+            NavigationStack {
+                NoteEditorView(mode: .create) { note in
+                    Task { await viewModel.fetchNotes() }
+                    pendingNavigationNoteId = note.id
+                }
             }
         }
         #else
@@ -82,9 +84,11 @@ struct NoteListView: View {
                     navigationManager.navigateToNote(id: noteId)
                 }
             }) {
-                NoteEditorView(mode: .create) { note in
-                    Task { await viewModel.fetchNotes() }
-                    pendingNavigationNoteId = note.id
+                NavigationStack {
+                    NoteEditorView(mode: .create) { note in
+                        Task { await viewModel.fetchNotes() }
+                        pendingNavigationNoteId = note.id
+                    }
                 }
             }
         #endif
@@ -135,16 +139,16 @@ private struct NoteRow: View {
     let note: Note
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(note.title)
-                .font(.headline)
-                .lineLimit(1)
+        VStack(alignment: .leading) {
+            HStack {
+                Text(note.title)
+                    .font(.headline)
+                    .lineLimit(1)
 
-            if let content = note.note {
-                Text(content)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                Spacer()
+                Label(noteTypeDisplayName, systemImage: noteTypeIcon)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
             }
 
             HStack(spacing: 8) {
@@ -158,6 +162,7 @@ private struct NoteRow: View {
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
+            .padding(.vertical, 2)
         }
         .padding(.vertical, 4)
     }
@@ -169,19 +174,57 @@ private struct NoteRow: View {
         case .auth_hyphen_only: return "person.badge.key"
         }
     }
+
+    private var noteTypeDisplayName: String {
+        switch note._type {
+        case .regular_hyphen_text_hyphen_note: return "Text"
+        case .business_hyphen_card: return "Business Card"
+        }
+    }
+
+    private var noteTypeIcon: String {
+        switch note._type {
+        case .regular_hyphen_text_hyphen_note: return "doc.text"
+        case .business_hyphen_card: return "person.text.rectangle"
+        }
+    }
 }
 
-#Preview {
-    NavigationStack {
-        NoteListView()
-            .navigationDestination(for: AppDestination.self) { destination in
-                switch destination {
-                case .noteDetail(let id):
-                    NoteDetailView(noteId: id)
-                case .webPage(let page):
-                    WebPageView(page: page)
-                }
-            }
+#Preview("Text Note Row") {
+    List {
+        NoteRow(note: Note(
+            id: "1",
+            userId: "user-1",
+            _type: .regular_hyphen_text_hyphen_note,
+            title: "Meeting Notes",
+            note: "Discussed project timeline and deliverables for Q2.",
+            images: [],
+            audios: [],
+            videos: [],
+            actions: [],
+            visibility: ._public,
+            previewUrl: "https://example.com/preview/1",
+            createdAt: Date(),
+            updatedAt: Date()
+        ))
     }
-    .environment(NavigationManager())
+}
+
+#Preview("Business Card Row") {
+    List {
+        NoteRow(note: Note(
+            id: "2",
+            userId: "user-1",
+            _type: .business_hyphen_card,
+            title: "Jane Smith",
+            images: [],
+            audios: [],
+            videos: [],
+            actions: [],
+            visibility: ._private,
+            previewUrl: "https://example.com/preview/2",
+            createdAt: Date(),
+            updatedAt: Date()
+        ))
+    }
 }

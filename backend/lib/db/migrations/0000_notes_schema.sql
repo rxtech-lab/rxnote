@@ -4,6 +4,7 @@ CREATE TABLE `notes` (
 	`type` text DEFAULT 'regular-text-note' NOT NULL,
 	`title` text NOT NULL,
 	`note` text,
+	`business_card` text DEFAULT null,
 	`images` text DEFAULT '[]',
 	`audios` text DEFAULT '[]',
 	`videos` text DEFAULT '[]',

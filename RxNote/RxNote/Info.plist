@@ -30,6 +30,9 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save QR codes to your photo library</string>
 
+	<key>NSContactsUsageDescription</key>
+	<string>Contacts access is needed to add shared business card details to your address book</string>
+
 	<key>NFCReaderUsageDescription</key>
 	<string>NFC access is needed to write item information to NFC tags</string>
 

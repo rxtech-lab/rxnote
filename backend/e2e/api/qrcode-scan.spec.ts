@@ -13,9 +13,9 @@ test.describe.serial("QR Code Scan API", () => {
   const WHITELISTED_USER = "qr-whitelisted-user";
   const WHITELISTED_EMAIL = "qr-whitelisted@example.com";
 
-  let publicNoteId: number;
-  let privateNoteId: number;
-  let authOnlyNoteId: number;
+  let publicNoteId: string;
+  let privateNoteId: string;
+  let authOnlyNoteId: string;
 
   test.describe("Setup - Create test data", () => {
     test("should create public note", async ({ request }) => {
@@ -328,7 +328,7 @@ test.describe.serial("QR Code Scan API", () => {
           "X-Test-User-Email": OWNER_EMAIL,
         },
         data: {
-          qrcontent: "preview/note/999999",
+          qrcontent: "preview/note/nonexistent-id",
         },
       });
       expect(response.status()).toBe(400);
@@ -346,7 +346,7 @@ test.describe.serial("QR Code Scan API", () => {
           "X-Test-User-Email": OWNER_EMAIL,
         },
         data: {
-          qrcontent: "preview/note?id=999999",
+          qrcontent: "preview/note?id=nonexistent-id",
         },
       });
       expect(response.status()).toBe(400);

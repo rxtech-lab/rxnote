@@ -85,7 +85,7 @@ public final class NoteListViewModel {
     }
 
     /// Delete a note
-    public func deleteNote(id: Int) async {
+    public func deleteNote(id: String) async {
         error = nil
         do {
             try await service.deleteNote(id: id)
