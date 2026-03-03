@@ -1,5 +1,9 @@
 # RxNote
 
+<p align="center">
+  <img src="./docs/logo.svg" alt="RxNote Logo" width="160" />
+</p>
+
 A dual-platform quick note-taking app with QR code and NFC support.
 
 ## Overview

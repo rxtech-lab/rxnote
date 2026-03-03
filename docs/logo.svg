@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1d4ed8"/>
+      <stop offset="100%" style="stop-color:#6d28d9"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#e0e7ff;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="240" height="240" rx="52" ry="52" fill="url(#bgGrad)"/>
+
+  <!-- Note card shadow -->
+  <rect x="66" y="56" width="112" height="136" rx="12" ry="12" fill="#000000" opacity="0.15"/>
+
+  <!-- Note card -->
+  <rect x="62" y="52" width="112" height="136" rx="12" ry="12" fill="url(#cardGrad)"/>
+
+  <!-- Folded corner -->
+  <polygon points="150,52 174,76 150,76" fill="#c7d2fe"/>
+  <polygon points="150,52 174,76 150,76" fill="#818cf8" opacity="0.5"/>
+  <!-- Fold crease -->
+  <line x1="150" y1="52" x2="174" y2="76" stroke="#a5b4fc" stroke-width="1"/>
+
+  <!-- "Rx" text on the card -->
+  <text x="102" y="120" font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="bold" fill="#1e3a8a" text-anchor="middle" dominant-baseline="middle">Rx</text>
+
+  <!-- Note lines -->
+  <rect x="78" y="140" width="72" height="5" rx="2.5" fill="#c7d2fe"/>
+  <rect x="78" y="153" width="52" height="5" rx="2.5" fill="#c7d2fe"/>
+  <rect x="78" y="166" width="60" height="5" rx="2.5" fill="#c7d2fe"/>
+
+  <!-- Small QR dots (bottom-right of card) -->
+  <rect x="150" y="140" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.7"/>
+  <rect x="161" y="140" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.7"/>
+  <rect x="150" y="151" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.7"/>
+  <rect x="161" y="151" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.3"/>
+
+  <!-- App name text below card -->
+  <text x="120" y="208" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="20" font-weight="600" fill="white" text-anchor="middle" opacity="0.95" letter-spacing="1">RxNote</text>
+</svg>
