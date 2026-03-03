@@ -48,35 +48,49 @@ final class RxNoteBusinessCardTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["John Doe"].firstMatch.waitForExistence(timeout: 15), "Created business card note should appear with auto-generated title")
     }
 
-    func testCreateAddContactAction() throws {
+    func testImportContactFromContactsAndSave() throws {
         let app = launchApp()
         try app.signInWithEmailAndPassword()
 
         XCTAssertTrue(app.addNoteButton.waitForExistence(timeout: 10), "Add note button should exist")
         app.addNoteButton.tap()
 
-        XCTAssertTrue(app.noteTitleField.waitForExistence(timeout: 10), "Title field should exist")
-        app.noteTitleField.tap()
-        app.noteTitleField.typeText("Action Test Note")
+        // Switch to Business Card type
+        XCTAssertTrue(app.noteTypePicker.waitForExistence(timeout: 10), "Note type picker menu should exist")
+        app.noteTypePicker.tap()
+        app.buttons["Business Card"].firstMatch.tap()
 
-        XCTAssertTrue(app.addActionButton.waitForExistence(timeout: 5), "Add action button should exist")
-        app.addActionButton.tap()
+        // Tap on the profile photo to open the menu
+        XCTAssertTrue(app.businessCardFirstNameField.waitForExistence(timeout: 10), "Business card first name field should exist")
+        XCTAssertTrue(app.businessCardProfilePhoto.waitForExistence(timeout: 10), "Business card profile photo should exist")
+        app.businessCardProfilePhoto.tap()
 
-        let addContactSegment = app.actionTypeAddContact.exists
-            ? app.actionTypeAddContact
-            : app.buttons["Add Contact"].firstMatch
-        XCTAssertTrue(addContactSegment.waitForExistence(timeout: 5), "Add Contact option should exist")
-        addContactSegment.tap()
+        // Tap "Import from Contacts" menu option
+        let importButton = app.buttons["Import from Contacts"].firstMatch
+        XCTAssertTrue(importButton.waitForExistence(timeout: 5), "Import from Contacts option should be visible")
+        importButton.tap()
 
-        XCTAssertTrue(app.contactFirstNameField.waitForExistence(timeout: 5), "Contact first name field should exist")
-        app.contactFirstNameField.tap()
-        app.contactFirstNameField.typeText("Jane")
+        // Wait for the contact picker to appear (system CNContactPickerViewController)
+        // The picker is presented modally, so we need to wait for it to fully appear
+        sleep(1)
 
-        XCTAssertTrue(app.contactLastNameField.waitForExistence(timeout: 5), "Contact last name field should exist")
-        app.contactLastNameField.tap()
-        app.contactLastNameField.typeText("Smith")
+        // The contact picker cells are in a table view - tap the first available contact
+        // Use coordinate-based tap since system picker cells may not be directly hittable
 
-        app.buttons["Save"].firstMatch.tap()
-        XCTAssertTrue(app.staticTexts["Jane Smith"].firstMatch.waitForExistence(timeout: 5), "Saved add-contact action should appear")
+        let contactsViewServiceApp = XCUIApplication(bundleIdentifier: "com.apple.ContactsUI.ContactsViewService")
+        contactsViewServiceApp/*@START_MENU_TOKEN@*/ .cells["John Appleseed"]/*[[".cells",".containing(.staticText, identifier: \"John Appleseed\")",".containing(.button, identifier: \"Contact photo for John Appleseed\")",".collectionViews.cells[\"John Appleseed\"]",".cells[\"John Appleseed\"]"],[[[-1,4],[-1,3],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ .firstMatch.tap()
+
+        // After selecting a contact, the fields should be populated
+        // Wait for the first name field to be visible again (picker dismisses)
+        XCTAssertTrue(app.businessCardFirstNameField.waitForExistence(timeout: 10), "First name field should exist after import")
+
+        // Save the imported contact as a business card note
+        XCTAssertTrue(app.noteSaveButton.waitForExistence(timeout: 5), "Save button should exist")
+        app.noteSaveButton.tap()
+
+        // Verify the note was created - we should return to the note list
+        XCTAssertTrue(app.staticTexts["John Appleseed"].firstMatch.waitForExistence(timeout: 15), "Created business card note should appear with contact's name as title")
     }
+    
+    
 }

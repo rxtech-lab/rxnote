@@ -1,7 +1,8 @@
 import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { nanoid } from "nanoid";
 
 export const notes = sqliteTable("notes", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
   userId: text("user_id").notNull(),
   type: text("type", { enum: ["regular-text-note", "business-card"] })
     .notNull()

@@ -116,7 +116,9 @@ struct PresetPickerSheet: View {
                 }
             }
             .navigationTitle("Add \(category.title)")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -174,7 +176,9 @@ struct CustomLabelFormView: View {
             }
         }
         .navigationTitle("Custom Label")
+#if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+#endif
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {

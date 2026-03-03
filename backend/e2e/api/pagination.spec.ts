@@ -13,7 +13,7 @@ import { test, expect } from "@playwright/test";
  */
 
 test.describe.serial("Notes Pagination API", () => {
-  const createdNoteIds: number[] = [];
+  const createdNoteIds: string[] = [];
   const PAGE_SIZE = 5;
 
   test.beforeAll(async ({ request }) => {
@@ -91,11 +91,11 @@ test.describe.serial("Notes Pagination API", () => {
     const secondPage = await secondResponse.json();
 
     // Second page should have different notes
-    const firstPageIds = firstPage.data.map((note: { id: number }) => note.id);
-    const secondPageIds = secondPage.data.map((note: { id: number }) => note.id);
+    const firstPageIds = firstPage.data.map((note: { id: string }) => note.id);
+    const secondPageIds = secondPage.data.map((note: { id: string }) => note.id);
 
     // No overlap between pages
-    const overlap = firstPageIds.filter((id: number) =>
+    const overlap = firstPageIds.filter((id: string) =>
       secondPageIds.includes(id)
     );
     expect(overlap.length).toBe(0);
@@ -131,8 +131,8 @@ test.describe.serial("Notes Pagination API", () => {
     const backPage = await backResponse.json();
 
     // Should have same notes as first page
-    const firstPageIds = firstPage.data.map((note: { id: number }) => note.id);
-    const backPageIds = backPage.data.map((note: { id: number }) => note.id);
+    const firstPageIds = firstPage.data.map((note: { id: string }) => note.id);
+    const backPageIds = backPage.data.map((note: { id: string }) => note.id);
 
     expect(backPageIds.sort()).toEqual(firstPageIds.sort());
   });
@@ -236,8 +236,8 @@ test.describe("Pagination Edge Cases", () => {
     const secondPage2 = await secondResponse2.json();
 
     // Both responses should have same notes
-    const ids1 = secondPage1.data.map((note: { id: number }) => note.id);
-    const ids2 = secondPage2.data.map((note: { id: number }) => note.id);
+    const ids1 = secondPage1.data.map((note: { id: string }) => note.id);
+    const ids2 = secondPage2.data.map((note: { id: string }) => note.id);
 
     expect(ids1).toEqual(ids2);
   });

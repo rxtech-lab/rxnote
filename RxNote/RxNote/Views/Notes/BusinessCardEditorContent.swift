@@ -165,7 +165,7 @@ struct BusinessCardReadOnlyContent: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(Color.appAccent)
-                .padding(.horizontal, 32)
+                .padding(.horizontal)
                 .padding(.top, 8)
                 .accessibilityIdentifier("business-card-add-contact-button")
             }

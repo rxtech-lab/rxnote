@@ -35,7 +35,7 @@ enum NoteTestFactories {
     }
 
     static func makeNote(
-        id: Int = 1,
+        id: String = "1",
         type: Note._typePayload = .regular_hyphen_text_hyphen_note,
         title: String = "Test Note",
         note: String? = "Sample note",
@@ -63,7 +63,7 @@ enum NoteTestFactories {
     }
 
     static func makeNoteDetail(
-        id: Int = 1,
+        id: String = "1",
         type: NoteDetail._typePayload = .regular_hyphen_text_hyphen_note,
         title: String = "Test Note",
         note: String? = "Sample note",

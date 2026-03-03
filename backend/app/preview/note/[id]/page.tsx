@@ -51,7 +51,7 @@ export async function generateMetadata({
   params,
 }: PreviewPageProps): Promise<Metadata> {
   const { id } = await params;
-  const note = await getNote(parseInt(id));
+  const note = await getNote(id);
 
   if (!note) {
     return { title: "Note Not Found" };
@@ -76,7 +76,6 @@ export async function generateMetadata({
 
 export default async function PreviewPage({ params }: PreviewPageProps) {
   const { id } = await params;
-  const noteId = parseInt(id);
 
   const headersList = await headers();
   const accept = headersList.get("accept") || "";
@@ -84,7 +83,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
     redirect(`/api/v1/notes/${id}`);
   }
 
-  const note = await getNote(noteId);
+  const note = await getNote(id);
 
   if (!note) {
     notFound();
@@ -95,13 +94,13 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
     const session = await auth();
 
     if (!session?.user) {
-      redirect(`/login?callbackUrl=/preview/note/${noteId}`);
+      redirect(`/login?callbackUrl=/preview/note/${id}`);
     }
 
     // Owner always has access
     if (note.userId !== session.user.id) {
       const hasAccess = session.user.email
-        ? await isEmailWhitelistedForNote(noteId, session.user.email)
+        ? await isEmailWhitelistedForNote(id, session.user.email)
         : false;
 
       if (!hasAccess) {
@@ -127,7 +126,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
   } else if (note.visibility === "auth-only") {
     const session = await auth();
     if (!session?.user) {
-      redirect(`/login?callbackUrl=/preview/note/${noteId}`);
+      redirect(`/login?callbackUrl=/preview/note/${id}`);
     }
   }
 

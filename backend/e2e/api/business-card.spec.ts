@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe.serial("Business Card Notes API", () => {
   const TEST_USER = `business-card-user-${crypto.randomUUID()}`;
-  let noteId: number;
+  let noteId: string;
 
   test("POST /api/v1/notes creates business-card note with add-contact action", async ({
     request,

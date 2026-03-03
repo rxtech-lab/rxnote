@@ -28,12 +28,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const noteId = parseInt(id);
-
-  if (isNaN(noteId)) {
-    return NextResponse.json({ error: "Invalid note ID" }, { status: 400 });
-  }
+  const { id: noteId } = await params;
 
   const note = await getNote(noteId);
   if (!note) {
@@ -66,12 +61,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const noteId = parseInt(id);
-
-  if (isNaN(noteId)) {
-    return NextResponse.json({ error: "Invalid note ID" }, { status: 400 });
-  }
+  const { id: noteId } = await params;
 
   const note = await getNote(noteId);
   if (!note) {
@@ -119,12 +109,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const noteId = parseInt(id);
-
-  if (isNaN(noteId)) {
-    return NextResponse.json({ error: "Invalid note ID" }, { status: 400 });
-  }
+  const { id: noteId } = await params;
 
   const note = await getNote(noteId);
   if (!note) {

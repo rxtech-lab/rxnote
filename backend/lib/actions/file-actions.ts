@@ -81,7 +81,7 @@ export async function getFiles(ids: number[]): Promise<UploadFile[]> {
 /**
  * Get files by note ID
  */
-export async function getFilesByNoteId(noteId: number): Promise<UploadFile[]> {
+export async function getFilesByNoteId(noteId: string): Promise<UploadFile[]> {
   await ensureSchemaInitialized();
   return db.select().from(uploadFiles).where(eq(uploadFiles.noteId, noteId));
 }
@@ -171,7 +171,7 @@ export async function validateFilesExistInS3(
  */
 export async function associateFilesWithNote(
   fileIds: number[],
-  noteId: number,
+  noteId: string,
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
   if (fileIds.length === 0) {
@@ -289,7 +289,7 @@ export async function deleteFileAction(
  * Called when a note is deleted
  */
 export async function deleteFilesForNote(
-  noteId: number
+  noteId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await ensureSchemaInitialized();

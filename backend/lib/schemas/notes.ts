@@ -166,7 +166,7 @@ export const NoteUpdateSchema = z.object({
 
 // Response schema
 export const NoteResponseSchema = z.object({
-  id: z.number().int().describe("Unique note identifier"),
+  id: z.string().describe("Unique note identifier"),
   userId: z.string().describe("Owner user ID"),
   type: z.enum(["regular-text-note", "business-card"]).describe("Note type"),
   title: z.string().describe("Note title"),

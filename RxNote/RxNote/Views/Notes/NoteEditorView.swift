@@ -499,7 +499,7 @@ extension String: @retroactive Identifiable {
 
 #Preview("With Actions") {
     let sampleNote = NoteDetail(
-        id: 1,
+        id: "1",
         userId: "user-1",
         _type: .regular_hyphen_text_hyphen_note,
         title: "Meeting Room WiFi",
@@ -528,12 +528,12 @@ extension String: @retroactive Identifiable {
         updatedAt: Date(),
         whitelist: []
     )
-    NoteEditorView(mode: .view(noteId: 1, existing: sampleNote))
+    NoteEditorView(mode: .view(noteId: "1", existing: sampleNote))
 }
 
 #Preview("Edit Mode") {
     let sampleNote = NoteDetail(
-        id: 1,
+        id: "1",
         userId: "user-1",
         _type: .regular_hyphen_text_hyphen_note,
         title: "Meeting Room WiFi",
@@ -562,12 +562,12 @@ extension String: @retroactive Identifiable {
         updatedAt: Date(),
         whitelist: []
     )
-    NoteEditorView(mode: .edit(noteId: 1, existing: sampleNote))
+    NoteEditorView(mode: .edit(noteId: "1", existing: sampleNote))
 }
 
 #Preview("Business Card - View") {
     let card = NoteDetail(
-        id: 2,
+        id: "2",
         userId: "user-1",
         _type: .business_hyphen_card,
         title: "Jane Smith",
@@ -594,12 +594,12 @@ extension String: @retroactive Identifiable {
         updatedAt: Date(),
         whitelist: []
     )
-    NoteEditorView(mode: .view(noteId: 2, existing: card))
+    NoteEditorView(mode: .view(noteId: "2", existing: card))
 }
 
 #Preview("Business Card - Edit") {
     let card = NoteDetail(
-        id: 3,
+        id: "3",
         userId: "user-1",
         _type: .business_hyphen_card,
         title: "Bob Jones",
@@ -630,7 +630,7 @@ extension String: @retroactive Identifiable {
         updatedAt: Date(),
         whitelist: []
     )
-    NoteEditorView(mode: .edit(noteId: 3, existing: card))
+    NoteEditorView(mode: .edit(noteId: "3", existing: card))
 }
 
 #Preview("Business Card - Create") {

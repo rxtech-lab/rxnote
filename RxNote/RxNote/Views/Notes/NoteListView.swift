@@ -14,7 +14,7 @@ struct NoteListView: View {
     @State private var viewModel = NoteListViewModel()
     @State private var showNoteEditor = false
     @State private var showingErrorAlert = false
-    @State private var pendingNavigationNoteId: Int?
+    @State private var pendingNavigationNoteId: String?
 
     var body: some View {
         Group {
@@ -193,7 +193,7 @@ private struct NoteRow: View {
 #Preview("Text Note Row") {
     List {
         NoteRow(note: Note(
-            id: 1,
+            id: "1",
             userId: "user-1",
             _type: .regular_hyphen_text_hyphen_note,
             title: "Meeting Notes",
@@ -213,7 +213,7 @@ private struct NoteRow: View {
 #Preview("Business Card Row") {
     List {
         NoteRow(note: Note(
-            id: 2,
+            id: "2",
             userId: "user-1",
             _type: .business_hyphen_card,
             title: "Jane Smith",

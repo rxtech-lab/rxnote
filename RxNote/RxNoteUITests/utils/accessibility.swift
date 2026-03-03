@@ -24,7 +24,7 @@ extension XCUIApplication {
         buttons["add-note-button"].firstMatch
     }
 
-    func noteRow(id: Int) -> XCUIElement {
+    func noteRow(id: String) -> XCUIElement {
         // NavigationLink is not exposed as a button, use descendants to find by identifier
         descendants(matching: .any).matching(identifier: "note-row-\(id)").firstMatch
     }

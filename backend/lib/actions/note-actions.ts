@@ -83,7 +83,7 @@ export async function getNotes(
     .orderBy(desc(notes.updatedAt));
 }
 
-export async function getNote(id: number): Promise<Note | undefined> {
+export async function getNote(id: string): Promise<Note | undefined> {
   await ensureSchemaInitialized();
   const results = await db
     .select()
@@ -148,8 +148,8 @@ export async function createNoteAction(
       }
       // Strip imageFileId from stored data (it's response-only)
       if (businessCard) {
-        const { imageFileId: _, ...bcData } = businessCard as Record<string, unknown>;
-        businessCard = bcData as typeof businessCard;
+        const { imageFileId: _, ...bcData } = businessCard as unknown as Record<string, unknown>;
+        businessCard = bcData as unknown as typeof businessCard;
       }
     } else {
       businessCard = null;
@@ -189,7 +189,7 @@ export async function createNoteAction(
 }
 
 export async function updateNoteAction(
-  id: number,
+  id: string,
   data: Partial<Omit<NewNote, "id" | "userId" | "createdAt" | "updatedAt">>,
   userId?: string,
 ): Promise<{ success: boolean; data?: Note; error?: string }> {
@@ -250,7 +250,7 @@ export async function updateNoteAction(
     // Handle business card image file changes
     if (data.businessCard !== undefined) {
       const newBcImageUrl = data.businessCard?.imageUrl;
-      const oldBcImageUrl = (existing[0].businessCard as Record<string, unknown> | null)?.imageUrl as string | undefined;
+      const oldBcImageUrl = (existing[0].businessCard as unknown as Record<string, unknown> | null)?.imageUrl as string | undefined;
       const newBcFileIds = newBcImageUrl && isFileId(newBcImageUrl) ? parseFileIds([newBcImageUrl]) : [];
       const oldBcFileIds = oldBcImageUrl && isFileId(oldBcImageUrl) ? parseFileIds([oldBcImageUrl]) : [];
       const addedBcFileIds = newBcFileIds.filter((fid) => !oldBcFileIds.includes(fid));
@@ -288,8 +288,8 @@ export async function updateNoteAction(
       }
       // Strip imageFileId from stored data (it's response-only)
       if (updateData.businessCard) {
-        const { imageFileId: _, ...bcData } = updateData.businessCard as Record<string, unknown>;
-        updateData.businessCard = bcData as typeof updateData.businessCard;
+        const { imageFileId: _, ...bcData } = updateData.businessCard as unknown as Record<string, unknown>;
+        updateData.businessCard = bcData as unknown as typeof updateData.businessCard;
       }
     } else {
       updateData.businessCard = null;
@@ -316,7 +316,7 @@ export async function updateNoteAction(
 }
 
 export async function deleteNoteAction(
-  id: number,
+  id: string,
   userId?: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {

@@ -37,14 +37,14 @@ final actor MockNoteService: NoteServiceProtocol {
         throw APIError.notFound
     }
 
-    func getNote(id _: Int) async throws -> NoteDetail {
+    func getNote(id _: String) async throws -> NoteDetail {
         if let noteDetail {
             return noteDetail
         }
         throw APIError.notFound
     }
 
-    func updateNote(id _: Int, input: NoteUpdate) async throws -> Note {
+    func updateNote(id _: String, input: NoteUpdate) async throws -> Note {
         capturedUpdateInput = input
         if let updatedNote {
             return updatedNote
@@ -52,5 +52,5 @@ final actor MockNoteService: NoteServiceProtocol {
         throw APIError.notFound
     }
 
-    func deleteNote(id _: Int) async throws {}
+    func deleteNote(id _: String) async throws {}
 }

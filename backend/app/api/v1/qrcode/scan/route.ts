@@ -94,9 +94,9 @@ export async function POST(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 
   // Pattern A1: Match preview/note?id=:id format (query param)
-  const queryParamMatch = qrcontent.match(/(?:^|\/)?preview\/note\?id=(\d+)(?:$|&|#)/);
+  const queryParamMatch = qrcontent.match(/(?:^|\/)?preview\/note\?id=([a-zA-Z0-9_-]+)(?:$|&|#)/);
   if (queryParamMatch) {
-    const noteId = parseInt(queryParamMatch[1]);
+    const noteId = queryParamMatch[1];
     const note = await getNote(noteId);
 
     if (!note) {
@@ -120,9 +120,9 @@ export async function POST(request: NextRequest) {
   }
 
   // Pattern A2: Match preview/note/:id format (path param)
-  const previewMatch = qrcontent.match(/(?:^|\/)?preview\/note\/(\d+)(?:$|[?#])/);
+  const previewMatch = qrcontent.match(/(?:^|\/)?preview\/note\/([a-zA-Z0-9_-]+)(?:$|[?#])/);
   if (previewMatch) {
-    const noteId = parseInt(previewMatch[1]);
+    const noteId = previewMatch[1];
     const note = await getNote(noteId);
 
     if (!note) {

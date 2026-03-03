@@ -28,8 +28,7 @@ interface RouteParams {
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
-  const noteId = parseInt(id);
-  const note = await getNote(noteId);
+  const note = await getNote(id);
 
   if (!note) {
     return NextResponse.json({ error: "Note not found" }, { status: 404 });
@@ -54,7 +53,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // Private: owner or whitelisted user only
   if (note.userId !== session.user.id) {
     if (session.user.email) {
-      const whitelisted = await isEmailWhitelistedForNote(noteId, session.user.email);
+      const whitelisted = await isEmailWhitelistedForNote(id, session.user.email);
       if (!whitelisted) {
         return NextResponse.json({ error: "Permission denied" }, { status: 403 });
       }
@@ -127,7 +126,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
   try {
     const body = await request.json();
-    const result = await updateNoteAction(parseInt(id), body, session.user.id);
+    const result = await updateNoteAction(id, body, session.user.id);
 
     if (result.success && result.data) {
       const previewUrl = `${process.env.NEXT_PUBLIC_URL}/preview/note?id=${result.data.id}`;
@@ -181,7 +180,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   }
 
   const { id } = await params;
-  const result = await deleteNoteAction(parseInt(id), session.user.id);
+  const result = await deleteNoteAction(id, session.user.id);
 
   if (result.success) {
     return new NextResponse(null, { status: 204 });

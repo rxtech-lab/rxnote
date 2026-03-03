@@ -16,7 +16,7 @@ import SwiftUI
 /// 3. After sign-in, retry fetching
 /// 4. If 403, show access denied
 struct AppClipRootView: View {
-    @State private var noteId: Int?
+    @State private var noteId: String?
     @State private var noteDetail: NoteDetail?
     @State private var parseError: String?
     @State private var oauthManager = OAuthManager(
@@ -282,14 +282,13 @@ struct AppClipRootView: View {
 
     // MARK: - Helpers
 
-    private func extractNoteId(from urlString: String) -> Int? {
+    private func extractNoteId(from urlString: String) -> String? {
         guard let url = URL(string: urlString) else { return nil }
         let components = url.pathComponents
         if let notesIndex = components.firstIndex(of: "notes"),
-           notesIndex + 1 < components.count,
-           let id = Int(components[notesIndex + 1])
+           notesIndex + 1 < components.count
         {
-            return id
+            return components[notesIndex + 1]
         }
         return nil
     }

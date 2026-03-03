@@ -28,8 +28,9 @@ export async function initializeSchema(client: Client) {
       .filter((s) => s.length > 0)
       // Replace CREATE TABLE with CREATE TABLE IF NOT EXISTS
       .map((s) => s.replace(/CREATE TABLE `/g, "CREATE TABLE IF NOT EXISTS `"))
-      // Skip ALTER TABLE statements for in-memory DB (columns already exist in latest schema)
-      .filter((s) => !s.startsWith("ALTER TABLE"));
+      // Skip ALTER TABLE ADD statements for in-memory DB (columns already exist in latest schema)
+      // Keep ALTER TABLE RENAME statements (needed for table recreation migrations)
+      .filter((s) => !(s.startsWith("ALTER TABLE") && !s.includes("RENAME TO")));
 
     for (const statement of statements) {
       try {

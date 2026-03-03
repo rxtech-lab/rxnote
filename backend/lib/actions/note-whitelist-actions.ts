@@ -5,7 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { db, noteWhitelists, type NoteWhitelist, type NewNoteWhitelist } from "@/lib/db";
 import { ensureSchemaInitialized } from "@/lib/db/client";
 
-export async function getNoteWhitelist(noteId: number): Promise<NoteWhitelist[]> {
+export async function getNoteWhitelist(noteId: string): Promise<NoteWhitelist[]> {
   await ensureSchemaInitialized();
   return db
     .select()
@@ -14,7 +14,7 @@ export async function getNoteWhitelist(noteId: number): Promise<NoteWhitelist[]>
     .orderBy(noteWhitelists.email);
 }
 
-export async function isEmailWhitelistedForNote(noteId: number, email: string): Promise<boolean> {
+export async function isEmailWhitelistedForNote(noteId: string, email: string): Promise<boolean> {
   const results = await db
     .select()
     .from(noteWhitelists)

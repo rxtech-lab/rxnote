@@ -20,7 +20,7 @@ final class RxNoteClipsUITests: XCTestCase {
     // MARK: - Note Loading Tests
 
     func testPublicNoteLoadsSuccessfully() {
-        let app = launchAppClip(withNoteId: 1)
+        let app = launchAppClip(withNoteId: "seed-public")
 
         // Wait for loading to complete
         let loadingIndicator = app.staticTexts["Loading..."]
@@ -35,7 +35,7 @@ final class RxNoteClipsUITests: XCTestCase {
     }
 
     func testPrivateNoteRequiresSignIn() throws {
-        let app = launchAppClip(withNoteId: 2)
+        let app = launchAppClip(withNoteId: "seed-private")
 
         // Wait for auth check to complete and sign-in view to appear
         XCTAssertTrue(app.appClipsSignInRequired.waitForExistence(timeout: 10))
@@ -50,7 +50,7 @@ final class RxNoteClipsUITests: XCTestCase {
 
     func testAccessDenied() throws {
         // This test note created by different users
-        let app = launchAppClip(withNoteId: 3)
+        let app = launchAppClip(withNoteId: "seed-other-user")
         try app.signInWithEmailAndPassword(isAppclips: true)
         XCTAssertTrue(app.appClipsAccessDenined.waitForExistence(timeout: 30))
     }
@@ -58,7 +58,7 @@ final class RxNoteClipsUITests: XCTestCase {
     // MARK: - Sign Out Button Visibility Tests
 
     func testSignOutNotShownWhenNotAuthenticated() {
-        let app = launchAppClip(withNoteId: 1)
+        let app = launchAppClip(withNoteId: "seed-public")
 
         // Wait for loading to complete
         let loadingIndicator = app.staticTexts["Loading..."]
@@ -72,7 +72,7 @@ final class RxNoteClipsUITests: XCTestCase {
     }
 
     func testSignOutShownWhenAuthenticated() throws {
-        let app = launchAppClip(withNoteId: 2)
+        let app = launchAppClip(withNoteId: "seed-private")
 
         // Sign in
         try app.signInWithEmailAndPassword(isAppclips: true)

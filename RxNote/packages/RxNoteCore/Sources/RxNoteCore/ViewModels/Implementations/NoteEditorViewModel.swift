@@ -136,8 +136,8 @@ public struct EditableAddress: Sendable {
 /// Mode for the note editor
 public enum NoteEditorMode {
     case create
-    case edit(noteId: Int, existing: NoteDetail)
-    case view(noteId: Int, existing: NoteDetail)
+    case edit(noteId: String, existing: NoteDetail)
+    case view(noteId: String, existing: NoteDetail)
 }
 
 // MARK: - View Model
@@ -276,7 +276,7 @@ public final class NoteEditorViewModel {
     }
 
     /// The note ID (for edit/view modes)
-    public var noteId: Int? {
+    public var noteId: String? {
         switch mode {
         case .create: return nil
         case let .edit(id, _): return id
