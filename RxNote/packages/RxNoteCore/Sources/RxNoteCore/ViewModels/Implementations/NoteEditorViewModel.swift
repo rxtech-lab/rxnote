@@ -50,6 +50,87 @@ public enum EditorVisibility: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+// MARK: - Note Type
+
+/// Note type for editor mode and payload mapping
+public enum EditorNoteType: String, CaseIterable, Identifiable, Sendable {
+    case regularTextNote = "regular-text-note"
+    case businessCard = "business-card"
+
+    public var id: String { rawValue }
+
+    public var displayName: String {
+        switch self {
+        case .regularTextNote: return "Text Note"
+        case .businessCard: return "Business Card"
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .regularTextNote: return "doc.text"
+        case .businessCard: return "person.text.rectangle"
+        }
+    }
+
+    public var insertValue: NoteInsert._typePayload {
+        .init(rawValue: rawValue)!
+    }
+
+    public var updateValue: NoteUpdate._typePayload {
+        .init(rawValue: rawValue)!
+    }
+}
+
+// MARK: - Identifiable Entry Types
+
+/// Identifiable wrapper for typed value entries (emails, phones)
+public struct TypedValueEntry: Identifiable, Sendable {
+    public let id: UUID
+    public var type: String
+    public var value: String
+
+    public init(id: UUID = UUID(), type: String = "", value: String = "") {
+        self.id = id
+        self.type = type
+        self.value = value
+    }
+}
+
+/// Identifiable wrapper for name-value entries (social profiles, IM)
+public struct NameValueEntry: Identifiable, Sendable {
+    public let id: UUID
+    public var name: String
+    public var value: String
+
+    public init(id: UUID = UUID(), name: String = "", value: String = "") {
+        self.id = id
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Editable structured address
+public struct EditableAddress: Sendable {
+    public var street: String
+    public var city: String
+    public var state: String
+    public var zip: String
+    public var country: String
+
+    public init(street: String = "", city: String = "", state: String = "", zip: String = "", country: String = "") {
+        self.street = street
+        self.city = city
+        self.state = state
+        self.zip = zip
+        self.country = country
+    }
+
+    public var isEmpty: Bool {
+        street.isEmpty && city.isEmpty && state.isEmpty && zip.isEmpty && country.isEmpty
+    }
+}
+
 // MARK: - Editor Mode
 
 /// Mode for the note editor
@@ -69,12 +150,34 @@ public final class NoteEditorViewModel {
 
     public var title: String = ""
     public var content: String = ""
+    public var noteType: EditorNoteType = .regularTextNote {
+        didSet {
+            if noteType != .businessCard {
+                clearBusinessCardFields()
+            }
+        }
+    }
     public var visibility: EditorVisibility = .public
     public var latitude: Double?
     public var longitude: Double?
     public var actions: [NoteAction] = []
     public var existingImages: [SignedImage] = []
     public var pendingUploads: [PendingUpload] = []
+    public var businessCardFirstName: String = ""
+    public var businessCardLastName: String = ""
+    public var businessCardEmails: [TypedValueEntry] = []
+    public var businessCardPhones: [TypedValueEntry] = []
+    public var businessCardCompany: String = ""
+    public var businessCardJobTitle: String = ""
+    public var businessCardWebsite: String = ""
+    public var businessCardAddress: EditableAddress = EditableAddress()
+    public var businessCardImageUrl: String?
+    public var businessCardImageFileId: Int?
+    public var businessCardPendingImageUpload: PendingUpload?
+    public var businessCardImageRemoved: Bool = false
+    public var businessCardSocialProfiles: [NameValueEntry] = []
+    public var businessCardInstantMessaging: [NameValueEntry] = []
+    public var businessCardWallets: [NameValueEntry] = []
 
     // MARK: - State
 
@@ -98,11 +201,36 @@ public final class NoteEditorViewModel {
         case let .edit(_, existing), let .view(_, existing):
             title = existing.title
             content = existing.note ?? ""
+            noteType = EditorNoteType(rawValue: existing._type.rawValue) ?? .regularTextNote
             visibility = EditorVisibility(from: existing.visibility)
             existingImages = existing.images
             latitude = existing.latitude
             longitude = existing.longitude
             actions = existing.actions
+            if let businessCard = existing.businessCard {
+                let bc = businessCard.value1
+                businessCardFirstName = bc.firstName
+                businessCardLastName = bc.lastName
+                businessCardEmails = bc.emails?.map { TypedValueEntry(type: $0._type, value: $0.value) } ?? []
+                businessCardPhones = bc.phones?.map { TypedValueEntry(type: $0._type, value: $0.value) } ?? []
+                businessCardCompany = bc.company ?? ""
+                businessCardJobTitle = bc.jobTitle ?? ""
+                businessCardWebsite = bc.website ?? ""
+                if let addr = bc.address?.value1 {
+                    businessCardAddress = EditableAddress(
+                        street: addr.street ?? "",
+                        city: addr.city ?? "",
+                        state: addr.state ?? "",
+                        zip: addr.zip ?? "",
+                        country: addr.country ?? ""
+                    )
+                }
+                businessCardImageUrl = bc.imageUrl
+                businessCardImageFileId = bc.imageFileId
+                businessCardSocialProfiles = bc.socialProfiles?.map { NameValueEntry(name: $0.name, value: $0.value) } ?? []
+                businessCardInstantMessaging = bc.instantMessaging?.map { NameValueEntry(name: $0.name, value: $0.value) } ?? []
+                businessCardWallets = bc.wallets?.map { NameValueEntry(name: $0.name, value: $0.value) } ?? []
+            }
         }
     }
 
@@ -110,12 +238,19 @@ public final class NoteEditorViewModel {
 
     /// Whether the form has enough data to save
     public var canSave: Bool {
-        !title.trimmingCharacters(in: .whitespaces).isEmpty
+        if noteType == .businessCard {
+            let hasFirstName = !businessCardFirstName.trimmingCharacters(in: .whitespaces).isEmpty
+            let hasLastName = !businessCardLastName.trimmingCharacters(in: .whitespaces).isEmpty
+            return hasFirstName && hasLastName
+        }
+        let hasTitle = !title.trimmingCharacters(in: .whitespaces).isEmpty
+        return hasTitle
     }
 
     /// Whether there are any uploads still in progress
     public var hasUploadsInProgress: Bool {
         pendingUploads.contains { $0.status.isInProgress }
+            || (businessCardPendingImageUpload?.status.isInProgress ?? false)
     }
 
     /// Note date for display
@@ -170,6 +305,17 @@ public final class NoteEditorViewModel {
             }
         }
 
+        // Auto-generate title for business cards
+        let resolvedTitle: String
+        let resolvedContent: String?
+        if noteType == .businessCard {
+            resolvedTitle = "\(businessCardFirstName.trimmingCharacters(in: .whitespaces)) \(businessCardLastName.trimmingCharacters(in: .whitespaces))"
+            resolvedContent = nil
+        } else {
+            resolvedTitle = title.trimmingCharacters(in: .whitespaces)
+            resolvedContent = content.isEmpty ? nil : content
+        }
+
         do {
             switch mode {
             case .view:
@@ -177,8 +323,12 @@ public final class NoteEditorViewModel {
 
             case .create:
                 let input = NoteInsert(
-                    title: title.trimmingCharacters(in: .whitespaces),
-                    note: content.isEmpty ? nil : content,
+                    title: resolvedTitle,
+                    _type: noteType.insertValue,
+                    note: resolvedContent,
+                    businessCard: noteType == .businessCard
+                        ? .init(value1: buildBusinessCardPayload())
+                        : nil,
                     images: imageRefs.isEmpty ? nil : imageRefs,
                     latitude: latitude,
                     longitude: longitude,
@@ -189,8 +339,12 @@ public final class NoteEditorViewModel {
 
             case let .edit(noteId, _):
                 let input = NoteUpdate(
-                    title: title.trimmingCharacters(in: .whitespaces),
-                    note: content.isEmpty ? nil : content,
+                    title: resolvedTitle,
+                    _type: noteType.updateValue,
+                    note: resolvedContent,
+                    businessCard: noteType == .businessCard
+                        ? .init(value1: buildBusinessCardPayload())
+                        : nil,
                     images: imageRefs,
                     latitude: latitude,
                     longitude: longitude,
@@ -260,6 +414,56 @@ public final class NoteEditorViewModel {
         pendingUploads.removeAll { $0.id == id }
     }
 
+    // MARK: - Business Card Image Management
+
+    /// Upload a profile image for the business card
+    public func uploadBusinessCardImage(data: Data, filename: String = "profile.jpg") async {
+        let tempDir = FileManager.default.temporaryDirectory
+        let fileURL = tempDir.appendingPathComponent("\(UUID().uuidString)_\(filename)")
+
+        do {
+            try data.write(to: fileURL)
+
+            let contentType = MIMEType.from(url: fileURL)
+            let fileSize = Int64(data.count)
+
+            let pending = PendingUpload(
+                localURL: fileURL,
+                filename: filename,
+                contentType: contentType,
+                fileSize: fileSize,
+                status: .uploading
+            )
+            businessCardPendingImageUpload = pending
+            businessCardImageRemoved = false
+
+            let result = try await UploadManager.shared.upload(file: fileURL) { [weak self] sent, total in
+                Task { @MainActor [weak self] in
+                    self?.businessCardPendingImageUpload?.progress = Double(sent) / Double(total)
+                }
+            }
+
+            businessCardPendingImageUpload?.fileId = result.fileId
+            businessCardPendingImageUpload?.publicUrl = result.publicUrl
+            businessCardPendingImageUpload?.status = .completed
+            businessCardImageUrl = result.publicUrl
+
+            try? FileManager.default.removeItem(at: fileURL)
+        } catch {
+            businessCardPendingImageUpload = nil
+            self.error = error
+            try? FileManager.default.removeItem(at: fileURL)
+        }
+    }
+
+    /// Remove the business card profile image
+    public func removeBusinessCardImage() {
+        businessCardImageUrl = nil
+        businessCardImageFileId = nil
+        businessCardPendingImageUpload = nil
+        businessCardImageRemoved = true
+    }
+
     // MARK: - Action Management
 
     /// Add a new action
@@ -298,5 +502,84 @@ public final class NoteEditorViewModel {
     /// Clear the current error
     public func clearError() {
         error = nil
+    }
+
+    // MARK: - Private Helpers
+
+    private func clearBusinessCardFields() {
+        businessCardFirstName = ""
+        businessCardLastName = ""
+        businessCardEmails = []
+        businessCardPhones = []
+        businessCardCompany = ""
+        businessCardJobTitle = ""
+        businessCardWebsite = ""
+        businessCardAddress = EditableAddress()
+        businessCardImageUrl = nil
+        businessCardImageFileId = nil
+        businessCardPendingImageUpload = nil
+        businessCardImageRemoved = false
+        businessCardSocialProfiles = []
+        businessCardInstantMessaging = []
+        businessCardWallets = []
+    }
+
+    private func buildBusinessCardPayload() -> BusinessCard {
+        // Resolve image reference: pending upload > existing file > removed
+        let imageRef: String?
+        if let pending = businessCardPendingImageUpload, pending.status.isCompleted, let ref = pending.fileReference {
+            imageRef = ref
+        } else if businessCardImageRemoved {
+            imageRef = nil
+        } else if let fileId = businessCardImageFileId {
+            imageRef = "file:\(fileId)"
+        } else {
+            imageRef = nil
+        }
+
+        // Filter out empty entries
+        let emails = businessCardEmails
+            .filter { !$0.type.isEmpty && !$0.value.isEmpty }
+            .map { TypedValue(_type: $0.type, value: $0.value) }
+        let phones = businessCardPhones
+            .filter { !$0.type.isEmpty && !$0.value.isEmpty }
+            .map { TypedValue(_type: $0.type, value: $0.value) }
+        let socialProfiles = businessCardSocialProfiles
+            .filter { !$0.name.isEmpty && !$0.value.isEmpty }
+            .map { NameValue(name: $0.name, value: $0.value) }
+        let instantMessaging = businessCardInstantMessaging
+            .filter { !$0.name.isEmpty && !$0.value.isEmpty }
+            .map { NameValue(name: $0.name, value: $0.value) }
+        let wallets = businessCardWallets
+            .filter { !$0.name.isEmpty && !$0.value.isEmpty }
+            .map { NameValue(name: $0.name, value: $0.value) }
+
+        let addressPayload: BusinessCard.addressPayload?
+        if !businessCardAddress.isEmpty {
+            addressPayload = .init(value1: BusinessCardAddress(
+                street: businessCardAddress.street.isEmpty ? nil : businessCardAddress.street,
+                city: businessCardAddress.city.isEmpty ? nil : businessCardAddress.city,
+                state: businessCardAddress.state.isEmpty ? nil : businessCardAddress.state,
+                zip: businessCardAddress.zip.isEmpty ? nil : businessCardAddress.zip,
+                country: businessCardAddress.country.isEmpty ? nil : businessCardAddress.country
+            ))
+        } else {
+            addressPayload = nil
+        }
+
+        return BusinessCard(
+            firstName: businessCardFirstName.trimmingCharacters(in: .whitespaces),
+            lastName: businessCardLastName.trimmingCharacters(in: .whitespaces),
+            emails: emails.isEmpty ? nil : emails,
+            phones: phones.isEmpty ? nil : phones,
+            company: businessCardCompany.isEmpty ? nil : businessCardCompany,
+            jobTitle: businessCardJobTitle.isEmpty ? nil : businessCardJobTitle,
+            website: businessCardWebsite.isEmpty ? nil : businessCardWebsite,
+            address: addressPayload,
+            imageUrl: imageRef,
+            socialProfiles: socialProfiles.isEmpty ? nil : socialProfiles,
+            instantMessaging: instantMessaging.isEmpty ? nil : instantMessaging,
+            wallets: wallets.isEmpty ? nil : wallets
+        )
     }
 }

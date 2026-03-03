@@ -32,8 +32,26 @@ public typealias URLAction = Components.Schemas.URLActionSchema
 /// WiFi action
 public typealias WifiAction = Components.Schemas.WifiActionSchema
 
+/// Add contact action
+public typealias AddContactAction = Components.Schemas.AddContactActionSchema
+
 /// Action (discriminated union)
 public typealias NoteAction = Components.Schemas.ActionSchema
+
+/// Business card data for business-card note type
+public typealias BusinessCard = Components.Schemas.BusinessCardSchema
+
+/// Typed value entry (e.g., email/phone with type label)
+public typealias TypedValue = Components.Schemas.TypedValueSchema
+
+/// Name-value entry (e.g., social profile with platform name)
+public typealias NameValue = Components.Schemas.NameValueSchema
+
+/// Structured address
+public typealias BusinessCardAddress = Components.Schemas.AddressSchema
+
+/// Business card presets response
+public typealias BusinessCardPresets = Components.Schemas.BusinessCardPresetsResponseSchema
 
 // MARK: - Whitelist Type Aliases
 

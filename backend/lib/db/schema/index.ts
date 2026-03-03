@@ -6,6 +6,8 @@ export {
   type Action,
   type URLAction,
   type WifiAction,
+  type AddContactAction,
+  type BusinessCard,
 } from "./notes";
 export {
   noteWhitelists,

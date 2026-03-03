@@ -89,6 +89,7 @@
 		DF44CC952F548B6100A2E4A4 /* Exceptions for "RxNote" folder in "RxNoteClips" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Models/CustomPresetLabel.swift,
 				Models/WebPage.swift,
 				Navigation/NavigationManager.swift,
 				Views/AdaptiveRootView.swift,
@@ -97,11 +98,16 @@
 				Views/Loading/LoadingOverlay.swift,
 				Views/Modifiers/ConfirmationDialogModifier.swift,
 				Views/Notes/ActionEditorView.swift,
+				Views/Notes/AddContactViewControllerRepresentable.swift,
+				Views/Notes/BusinessCardEditorContent.swift,
+				Views/Notes/ContactPickerViewControllerRepresentable.swift,
 				Views/Notes/FullscreenImageView.swift,
 				Views/Notes/LocationPickerView.swift,
 				Views/Notes/NoteDetailView.swift,
 				Views/Notes/NoteEditorView.swift,
+				Views/Notes/PresetPickerSheet.swift,
 				Views/Notes/NoteListView.swift,
+				Views/Notes/TextNoteEditorContent.swift,
 				Views/Notes/WiFiActionButton.swift,
 				Views/QRCode/NFCLockSheet.swift,
 				Views/QRCode/QRCodeScannerToolbar.swift,

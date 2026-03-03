@@ -15,6 +15,13 @@
       "when": 1772364822364,
       "tag": "0001_lively_gabe_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1772531734216,
+      "tag": "0002_short_ironclad",
+      "breakpoints": true
     }
   ]
 }

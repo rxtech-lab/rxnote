@@ -6,7 +6,7 @@ import {
   deleteNoteAction,
 } from "@/lib/actions/note-actions";
 import { getNoteWhitelist, isEmailWhitelistedForNote } from "@/lib/actions/note-whitelist-actions";
-import { signImagesArrayWithIds } from "@/lib/actions/s3-upload-actions";
+import { signImagesArrayWithIds, signBusinessCardImage } from "@/lib/actions/s3-upload-actions";
 import {
   NoteDetailResponseSchema,
   NoteResponseSchema,
@@ -72,7 +72,7 @@ async function buildNoteResponse(
 ) {
   const previewUrl = `${process.env.NEXT_PUBLIC_URL}/preview/note?id=${note.id}`;
 
-  const [images, whitelist] = await Promise.all([
+  const [images, whitelist, businessCard] = await Promise.all([
     note.images && (note.images as string[]).length > 0
       ? signImagesArrayWithIds(note.images as string[])
       : Promise.resolve([]),
@@ -80,10 +80,12 @@ async function buildNoteResponse(
     userId && note.userId === userId
       ? getNoteWhitelist(note.id)
       : Promise.resolve(undefined),
+    signBusinessCardImage(note.businessCard as Record<string, unknown> | null),
   ]);
 
   const responseData = {
     ...note,
+    businessCard,
     images,
     audios: (note.audios as string[]) || [],
     videos: (note.videos as string[]) || [],
@@ -130,13 +132,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (result.success && result.data) {
       const previewUrl = `${process.env.NEXT_PUBLIC_URL}/preview/note?id=${result.data.id}`;
 
-      const images =
+      const [images, businessCard] = await Promise.all([
         result.data.images && (result.data.images as string[]).length > 0
-          ? await signImagesArrayWithIds(result.data.images as string[])
-          : [];
+          ? signImagesArrayWithIds(result.data.images as string[])
+          : Promise.resolve([]),
+        signBusinessCardImage(result.data.businessCard as Record<string, unknown> | null),
+      ]);
 
       const responseData = {
         ...result.data,
+        businessCard,
         images,
         audios: (result.data.audios as string[]) || [],
         videos: (result.data.videos as string[]) || [],

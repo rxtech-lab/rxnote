@@ -5,7 +5,8 @@
       "propertyName": "type",
       "mapping": {
         "url": "#/components/schemas/URLActionSchema",
-        "wifi": "#/components/schemas/WifiActionSchema"
+        "wifi": "#/components/schemas/WifiActionSchema",
+        "add-contact": "#/components/schemas/AddContactActionSchema"
       }
     },
     "oneOf": [
@@ -14,6 +15,9 @@
       },
       {
         "$ref": "#/components/schemas/WifiActionSchema"
+      },
+      {
+        "$ref": "#/components/schemas/AddContactActionSchema"
       }
     ],
     "description": "An action associated with the note"

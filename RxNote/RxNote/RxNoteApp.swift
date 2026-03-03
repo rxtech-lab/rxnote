@@ -6,6 +6,7 @@
 //
 
 import RxNoteCore
+import SwiftData
 import SwiftUI
 
 @main
@@ -42,6 +43,7 @@ struct RxNoteApp: App {
                     await authManager.checkExistingAuth()
                 }
         }
+        .modelContainer(for: CustomPresetLabel.self)
         #if os(macOS)
         .defaultSize(width: 500, height: 600)
         .windowResizability(.contentSize)

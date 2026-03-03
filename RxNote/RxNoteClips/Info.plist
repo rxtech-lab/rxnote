@@ -14,6 +14,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location access is needed to pick your current location on the map</string>
 
+	<key>NSContactsUsageDescription</key>
+	<string>Contacts access is needed to add shared business card details to your address book</string>
+
 	<!-- Export Compliance -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>

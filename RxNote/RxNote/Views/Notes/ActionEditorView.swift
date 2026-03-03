@@ -2,7 +2,7 @@
 //  ActionEditorView.swift
 //  RxNote
 //
-//  Editor for creating/editing note actions (URL or WiFi)
+//  Editor for creating/editing note actions (URL, WiFi, or Add Contact)
 //
 
 import CoreLocation
@@ -29,12 +29,21 @@ struct ActionEditorView: View {
     @State private var wifiSSID = ""
     @State private var wifiPassword = ""
     @State private var wifiEncryption: WifiEncryption = .wpa
+    @State private var contactFirstName = ""
+    @State private var contactLastName = ""
+    @State private var contactEmail = ""
+    @State private var contactPhone = ""
+    @State private var contactCompany = ""
+    @State private var contactJobTitle = ""
+    @State private var contactWebsite = ""
+    @State private var contactAddress = ""
     @State private var isFetchingWiFi = false
     @State private var locationManager: CLLocationManager?
 
     enum ActionType: String, CaseIterable {
         case url = "URL"
         case wifi = "WiFi"
+        case addContact = "Add Contact"
     }
 
     enum WifiEncryption: String, CaseIterable {
@@ -55,6 +64,11 @@ struct ActionEditorView: View {
                     Picker("Type", selection: $actionType) {
                         ForEach(ActionType.allCases, id: \.self) { type in
                             Text(type.rawValue).tag(type)
+                                .accessibilityIdentifier(
+                                    type == .addContact
+                                        ? "action-type-add-contact"
+                                        : "action-type-\(type.rawValue.lowercased().replacingOccurrences(of: " ", with: "-"))"
+                                )
                         }
                     }
                     .pickerStyle(.segmented)
@@ -65,6 +79,8 @@ struct ActionEditorView: View {
                     urlForm
                 case .wifi:
                     wifiForm
+                case .addContact:
+                    addContactForm
                 }
             }
             .navigationTitle(isEditing ? "Edit Action" : "New Action")
@@ -126,6 +142,40 @@ struct ActionEditorView: View {
         }
     }
 
+    // MARK: - Add Contact Form
+
+    private var addContactForm: some View {
+        Section("Contact Information") {
+            TextField("First Name", text: $contactFirstName)
+                .accessibilityIdentifier("contact-first-name")
+            TextField("Last Name", text: $contactLastName)
+                .accessibilityIdentifier("contact-last-name")
+            TextField("Email", text: $contactEmail)
+                #if os(iOS)
+                .keyboardType(.emailAddress)
+                .textContentType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                #endif
+            TextField("Phone", text: $contactPhone)
+                #if os(iOS)
+                .keyboardType(.phonePad)
+                .textContentType(.telephoneNumber)
+                #endif
+            TextField("Company", text: $contactCompany)
+            TextField("Job Title", text: $contactJobTitle)
+            TextField("Website", text: $contactWebsite)
+                #if os(iOS)
+                .keyboardType(.URL)
+                .textContentType(.URL)
+                .textInputAutocapitalization(.never)
+                #endif
+            TextField("Address", text: $contactAddress)
+                #if os(iOS)
+                .textContentType(.fullStreetAddress)
+                #endif
+        }
+    }
+
     // MARK: - WiFi Fetch
 
     private func fetchCurrentWiFi() {
@@ -169,6 +219,9 @@ struct ActionEditorView: View {
                 && !urlString.trimmingCharacters(in: .whitespaces).isEmpty
         case .wifi:
             return !wifiSSID.trimmingCharacters(in: .whitespaces).isEmpty
+        case .addContact:
+            return !contactFirstName.trimmingCharacters(in: .whitespaces).isEmpty
+                && !contactLastName.trimmingCharacters(in: .whitespaces).isEmpty
         }
     }
 
@@ -189,6 +242,21 @@ struct ActionEditorView: View {
                 password: wifiPassword.isEmpty ? nil : wifiPassword,
                 encryption: encryption
             ))
+        case .addContact:
+            let trimmedEmail = contactEmail.trimmingCharacters(in: .whitespaces)
+            let trimmedPhone = contactPhone.trimmingCharacters(in: .whitespaces)
+            let trimmedAddress = contactAddress.trimmingCharacters(in: .whitespaces)
+            action = .add_hyphen_contact(.init(
+                _type: .add_hyphen_contact,
+                firstName: contactFirstName.trimmingCharacters(in: .whitespaces),
+                lastName: contactLastName.trimmingCharacters(in: .whitespaces),
+                emails: trimmedEmail.isEmpty ? nil : [.init(_type: "Work", value: trimmedEmail)],
+                phones: trimmedPhone.isEmpty ? nil : [.init(_type: "Mobile", value: trimmedPhone)],
+                company: contactCompany.isEmpty ? nil : contactCompany,
+                jobTitle: contactJobTitle.isEmpty ? nil : contactJobTitle,
+                website: contactWebsite.isEmpty ? nil : contactWebsite,
+                address: trimmedAddress.isEmpty ? nil : .init(value1: .init(street: trimmedAddress))
+            ))
         }
         onSave(action)
         dismiss()
@@ -208,6 +276,16 @@ struct ActionEditorView: View {
             if let enc = wifiAction.encryption {
                 wifiEncryption = WifiEncryption(rawValue: enc.rawValue) ?? .wpa
             }
+        case let .add_hyphen_contact(contactAction):
+            actionType = .addContact
+            contactFirstName = contactAction.firstName
+            contactLastName = contactAction.lastName
+            contactEmail = contactAction.emails?.first?.value ?? ""
+            contactPhone = contactAction.phones?.first?.value ?? ""
+            contactCompany = contactAction.company ?? ""
+            contactJobTitle = contactAction.jobTitle ?? ""
+            contactWebsite = contactAction.website ?? ""
+            contactAddress = contactAction.address?.value1.street ?? ""
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import RxNoteCore
+import SwiftData
 import SwiftUI
 
 @main
@@ -25,5 +26,6 @@ struct RxNoteClipsApp: App {
             AppClipRootView()
                 .environment(eventViewModel)
         }
+        .modelContainer(for: CustomPresetLabel.self)
     }
 }

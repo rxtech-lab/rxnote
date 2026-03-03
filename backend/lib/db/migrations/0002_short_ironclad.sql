@@ -1,0 +1,1 @@
+ALTER TABLE `notes` ADD `business_card` text DEFAULT 'null';

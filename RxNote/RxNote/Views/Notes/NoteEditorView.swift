@@ -5,6 +5,9 @@
 //  Full-screen note editor for creating, editing, and viewing notes
 //
 
+#if os(iOS)
+import Contacts
+#endif
 import MapKit
 import PhotosUI
 import RxNoteCore
@@ -48,10 +51,19 @@ struct NoteEditorView: View {
     @State private var showCamera = false
     #endif
     @State private var showLocationPicker = false
-    @State private var showVisibilityPicker = false
+    @State private var showBusinessCardPhotoMenu = false
+    @State private var businessCardPhotoItem: PhotosPickerItem?
+    #if os(iOS)
+    @State private var showBusinessCardCamera = false
+    #endif
+
     @State private var actionSheetMode: ActionSheetPresentation?
     @State private var fullscreenImageURL: String?
     @State private var wifiConnectionState: WiFiConnectionState = .idle
+    @State private var pendingAddContact: PendingAddContact?
+    #if os(iOS)
+    @State private var showContactPicker = false
+    #endif
 
     init(
         mode: NoteEditorMode = .create,
@@ -73,11 +85,21 @@ struct NoteEditorView: View {
                 Task { await handlePhotoSelection(items) }
                 selectedPhotoItems = []
             }
+            .onChange(of: businessCardPhotoItem) { _, item in
+                guard let item else { return }
+                Task { await handleBusinessCardPhotoSelection(item) }
+                businessCardPhotoItem = nil
+            }
             .scrollDismissesKeyboard(.interactively)
         #if os(iOS)
             .sheet(isPresented: $showCamera) {
                 CameraPickerView { image in
                     Task { await handleCameraCapture(image) }
+                }
+            }
+            .sheet(isPresented: $showBusinessCardCamera) {
+                CameraPickerView { image in
+                    Task { await handleBusinessCardCameraCapture(image) }
                 }
             }
         #endif
@@ -101,6 +123,39 @@ struct NoteEditorView: View {
                     }
                 }
             }
+            .sheet(item: $pendingAddContact) { pending in
+                #if os(iOS)
+                AddContactViewControllerRepresentable(action: pending.action) {
+                    pendingAddContact = nil
+                }
+                #else
+                VStack(spacing: 12) {
+                    Text("Add Contact")
+                        .font(.headline)
+                    Text("Adding contacts is only available on iOS.")
+                        .foregroundStyle(.secondary)
+                    Button("Close") {
+                        pendingAddContact = nil
+                    }
+                }
+                .padding(24)
+                #endif
+            }
+        #if os(iOS)
+            .sheet(isPresented: $showContactPicker, onDismiss: {
+                // Sheet dismissed (either by selection or cancel)
+            }) {
+                ContactPickerViewControllerRepresentable(
+                    onContactSelected: { contact in
+                        applyContact(contact)
+                    },
+                    onDismiss: {
+                        showContactPicker = false
+                    }
+                )
+                .ignoresSafeArea()
+            }
+        #endif
             .alert("Error", isPresented: .init(
                 get: { viewModel.error != nil },
                 set: { if !$0 { viewModel.clearError() } }
@@ -129,15 +184,8 @@ struct NoteEditorView: View {
         onCancel != nil
     }
 
-    @ViewBuilder
     private var editorWrapper: some View {
-        if viewModel.isReadOnly || isInline {
-            editorWithToolbar
-        } else {
-            NavigationStack {
-                editorWithToolbar
-            }
-        }
+        editorWithToolbar
     }
 
     private var editorWithToolbar: some View {
@@ -159,20 +207,24 @@ struct NoteEditorView: View {
                         Label("Cancel", systemImage: "xmark")
                     }
                 }
+
+                ToolbarItem(placement: .principal) {}
                 #if os(iOS)
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
 
-                    PhotosPicker(
-                        selection: $selectedPhotoItems,
-                        maxSelectionCount: 5,
-                        matching: .images
-                    ) {
-                        Image(systemName: "photo.on.rectangle")
-                    }
+                    if viewModel.noteType != .businessCard {
+                        PhotosPicker(
+                            selection: $selectedPhotoItems,
+                            maxSelectionCount: 5,
+                            matching: .images
+                        ) {
+                            Image(systemName: "photo.on.rectangle")
+                        }
 
-                    Button { showCamera = true } label: {
-                        Image(systemName: "camera")
+                        Button { showCamera = true } label: {
+                            Image(systemName: "camera")
+                        }
                     }
 
                     Button { showLocationPicker = true } label: {
@@ -182,17 +234,20 @@ struct NoteEditorView: View {
                     Button { actionSheetMode = .create } label: {
                         Image(systemName: "link.badge.plus")
                     }
+                    .accessibilityIdentifier("add-action-button")
 
                     Spacer()
                 }
                 #else
                 ToolbarItemGroup(placement: .secondaryAction) {
-                    PhotosPicker(
-                        selection: $selectedPhotoItems,
-                        maxSelectionCount: 5,
-                        matching: .images
-                    ) {
-                        Label("Add Photos", systemImage: "photo.on.rectangle")
+                    if viewModel.noteType != .businessCard {
+                        PhotosPicker(
+                            selection: $selectedPhotoItems,
+                            maxSelectionCount: 5,
+                            matching: .images
+                        ) {
+                            Label("Add Photos", systemImage: "photo.on.rectangle")
+                        }
                     }
 
                     Button { showLocationPicker = true } label: {
@@ -202,22 +257,45 @@ struct NoteEditorView: View {
                     Button { actionSheetMode = .create } label: {
                         Label("Add Action", systemImage: "link.badge.plus")
                     }
+                    .accessibilityIdentifier("add-action-button")
                 }
                 #endif
             }
 
             ToolbarItemGroup(placement: .primaryAction) {
                 if !viewModel.isReadOnly {
-                    Button {
-                        showVisibilityPicker = true
+                    Menu {
+                        Section("Note Type") {
+                            ForEach(EditorNoteType.allCases) { type in
+                                Button {
+                                    viewModel.noteType = type
+                                } label: {
+                                    if viewModel.noteType == type {
+                                        Label(type.displayName, systemImage: "checkmark")
+                                    } else {
+                                        Text(type.displayName)
+                                    }
+                                }
+                            }
+                        }
+
+                        Section("Visibility") {
+                            ForEach(EditorVisibility.allCases) { vis in
+                                Button {
+                                    viewModel.visibility = vis
+                                } label: {
+                                    if viewModel.visibility == vis {
+                                        Label(vis.displayName, systemImage: "checkmark")
+                                    } else {
+                                        Label(vis.displayName, systemImage: vis.systemImage)
+                                    }
+                                }
+                            }
+                        }
                     } label: {
-                        Label(viewModel.visibility.displayName, systemImage: viewModel.visibility.systemImage)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                        Image(systemName: viewModel.noteType.systemImage)
                     }
-                    .popover(isPresented: $showVisibilityPicker) {
-                        visibilityPicker
-                    }
+                    .accessibilityIdentifier("note-type-picker")
                 }
 
                 if viewModel.isReadOnly {
@@ -246,37 +324,6 @@ struct NoteEditorView: View {
         }
     }
 
-    // MARK: - Visibility Picker
-
-    private var visibilityPicker: some View {
-        VStack(spacing: 0) {
-            ForEach(EditorVisibility.allCases) { vis in
-                Button {
-                    viewModel.visibility = vis
-                    showVisibilityPicker = false
-                } label: {
-                    HStack {
-                        Label(vis.displayName, systemImage: vis.systemImage)
-                        Spacer()
-                        if viewModel.visibility == vis {
-                            Image(systemName: "checkmark")
-                                .foregroundStyle(Color.appAccent)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                }
-                .foregroundStyle(.primary)
-
-                if vis != EditorVisibility.allCases.last {
-                    Divider()
-                }
-            }
-        }
-        .frame(width: 200)
-        .presentationCompactAdaptation(.popover)
-    }
-
     // MARK: - Editor Content
 
     private var editorContent: some View {
@@ -288,317 +335,49 @@ struct NoteEditorView: View {
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 16)
 
-                // Media Section
-                if !viewModel.existingImages.isEmpty || !viewModel.pendingUploads.isEmpty || viewModel.latitude != nil {
-                    mediaSection
-                }
-
-                // Actions section (edit mode only - shows inline with edit/delete buttons)
-                if !viewModel.actions.isEmpty && !viewModel.isReadOnly {
-                    actionsSection
-                }
-
-                // Title
-                if viewModel.isReadOnly {
-                    Text(viewModel.title)
-                        .font(.title.weight(.bold))
-                        .padding(.horizontal, 16)
-                        .accessibilityIdentifier("note-detail-title")
-                } else {
-                    TextField("Title", text: $viewModel.title, axis: .vertical)
-                        .font(.title.weight(.bold))
-                        .padding(.horizontal, 16)
-                        .accessibilityIdentifier("note-title-field")
-                }
-
-                // Content
-                if viewModel.isReadOnly {
-                    if !viewModel.content.isEmpty {
-                        Text(viewModel.content)
-                            .font(.body)
-                            .padding(.horizontal, 16)
-                    }
-                } else {
-                    ZStack(alignment: .topLeading) {
-                        if viewModel.content.isEmpty {
-                            Text("Start writing...")
-                                .font(.body)
-                                .foregroundStyle(.tertiary)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 8)
+                if viewModel.noteType == .businessCard {
+                    BusinessCardEditorContent(
+                        viewModel: viewModel,
+                        businessCardPhotoItem: $businessCardPhotoItem,
+                        onShowCamera: {
+                            #if os(iOS)
+                            showBusinessCardCamera = true
+                            #endif
+                        },
+                        onImageTapped: { url in
+                            fullscreenImageURL = url
+                        },
+                        onActionEdit: { index, action in
+                            actionSheetMode = .edit(index: index, action: action)
+                        },
+                        onAddContact: { action in
+                            pendingAddContact = PendingAddContact(action: action)
+                        },
+                        onImportContact: {
+                            #if os(iOS)
+                            showContactPicker = true
+                            #endif
                         }
-                        TextEditor(text: $viewModel.content)
-                            .font(.body)
-                            .scrollContentBackground(.hidden)
-                            .padding(.horizontal, 12)
-                            .frame(minHeight: 200)
-                            .accessibilityIdentifier("note-content-field")
-                    }
-                }
-
-                // Action buttons (read-only mode - prominent buttons below content)
-                if !viewModel.actions.isEmpty && viewModel.isReadOnly {
-                    actionButtonsSection
+                    )
+                } else {
+                    TextNoteEditorContent(
+                        viewModel: viewModel,
+                        onImageTapped: { url in
+                            fullscreenImageURL = url
+                        },
+                        onActionEdit: { index, action in
+                            actionSheetMode = .edit(index: index, action: action)
+                        },
+                        onActionCreate: {
+                            actionSheetMode = .create
+                        }
+                    )
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 12)
         }
         .scrollDismissesKeyboard(.interactively)
-    }
-
-    // MARK: - Media Section
-
-    private var mediaSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Location map
-            if let lat = viewModel.latitude, let lon = viewModel.longitude {
-                locationThumbnail(latitude: lat, longitude: lon)
-            }
-
-            // Images
-            let hasImages = !viewModel.existingImages.isEmpty
-                || viewModel.pendingUploads.contains(where: { $0.status.isCompleted || $0.status.isInProgress })
-            if hasImages {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(viewModel.existingImages, id: \.id) { image in
-                            if viewModel.isReadOnly {
-                                tappableImageThumbnail(url: image.url)
-                            } else {
-                                imageCell(url: image.url) {
-                                    viewModel.removeExistingImage(id: image.id)
-                                }
-                            }
-                        }
-
-                        ForEach(viewModel.pendingUploads) { upload in
-                            if upload.status.isCompleted, let url = upload.publicUrl {
-                                if viewModel.isReadOnly {
-                                    tappableImageThumbnail(url: url)
-                                } else {
-                                    imageCell(url: url) {
-                                        viewModel.removePendingUpload(id: upload.id)
-                                    }
-                                }
-                            } else if upload.status.isInProgress {
-                                uploadProgressCell(upload)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                }
-            }
-        }
-    }
-
-    private func locationThumbnail(latitude: Double, longitude: Double) -> some View {
-        ZStack(alignment: .topTrailing) {
-            Map(initialPosition: .region(MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-            ))) {
-                Marker("", coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
-                    .tint(Color.appAccent)
-            }
-            .frame(height: 150)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .allowsHitTesting(false)
-            .overlay {
-                if viewModel.isReadOnly {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.clear)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            openInMaps(latitude: latitude, longitude: longitude)
-                        }
-                }
-            }
-
-            if viewModel.isReadOnly {
-                Image(systemName: "arrow.up.right.circle.fill")
-                    .font(.title3)
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .purple)
-                    .padding(8)
-            } else {
-                Button {
-                    viewModel.removeLocation()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title3)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .black.opacity(0.6))
-                }
-                .padding(8)
-            }
-        }
-        .padding(.horizontal, 16)
-    }
-
-    private func openInMaps(latitude: Double, longitude: Double) {
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        let mapItem = MKMapItem(location: location, address: nil)
-        mapItem.name = viewModel.title.isEmpty ? "Location" : viewModel.title
-        mapItem.openInMaps()
-    }
-
-    private func imageThumbnail(url: String) -> some View {
-        AsyncImage(url: URL(string: url)) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-                    .frame(width: 100, height: 100)
-            case let .success(image):
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 100, height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            case .failure:
-                Image(systemName: "photo")
-                    .frame(width: 100, height: 100)
-                    .background(Color(.secondarySystemFill))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            @unknown default:
-                EmptyView()
-            }
-        }
-    }
-
-    private func tappableImageThumbnail(url: String) -> some View {
-        Button {
-            fullscreenImageURL = url
-        } label: {
-            imageThumbnail(url: url)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func imageCell(url: String, onRemove: @escaping () -> Void) -> some View {
-        ZStack(alignment: .topTrailing) {
-            imageThumbnail(url: url)
-
-            Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.callout)
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .black.opacity(0.6))
-            }
-            .padding(4)
-        }
-    }
-
-    private func uploadProgressCell(_ upload: PendingUpload) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.secondarySystemFill))
-                .frame(width: 100, height: 100)
-
-            VStack(spacing: 4) {
-                ProgressView(value: upload.progress)
-                    .frame(width: 60)
-                Text(upload.formattedSize)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    // MARK: - Actions Section
-
-    private var actionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ForEach(Array(viewModel.actions.enumerated()), id: \.offset) { index, action in
-                HStack {
-                    actionLabel(action)
-                        .foregroundStyle(Color.appAccent)
-                    Spacer()
-                    Button {
-                        actionSheetMode = .edit(index: index, action: viewModel.actions[index])
-                    } label: {
-                        Image(systemName: "pencil")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    Button {
-                        viewModel.removeAction(at: index)
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.callout)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .black.opacity(0.6))
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                #if os(iOS)
-                .background(Color(.secondarySystemBackground))
-                #else
-                .background(Color(NSColor.controlBackgroundColor))
-                #endif
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-        }
-        .padding(.horizontal, 16)
-    }
-
-    @ViewBuilder
-    private func actionLabel(_ action: NoteAction) -> some View {
-        switch action {
-        case let .url(urlAction):
-            Label(urlAction.label, systemImage: "link")
-                .font(.body.weight(.medium))
-        case let .wifi(wifiAction):
-            Label(wifiAction.ssid, systemImage: "wifi")
-                .font(.body.weight(.medium))
-        }
-    }
-
-    // MARK: - Action Buttons Section (Read-Only)
-
-    private var actionButtonsSection: some View {
-        VStack(spacing: 12) {
-            Divider()
-            ForEach(Array(viewModel.actions.enumerated()), id: \.offset) { _, action in
-                actionButton(for: action)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-    }
-
-    @ViewBuilder
-    private func actionButton(for action: NoteAction) -> some View {
-        switch action {
-        case let .url(urlAction):
-            if let url = URL(string: urlAction.url) {
-                Link(destination: url) {
-                    HStack {
-                        Image(systemName: "link")
-                            .font(.body.weight(.medium))
-                        Text(urlAction.label)
-                            .font(.body.weight(.medium))
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    #if os(iOS)
-                        .background(Color(.secondarySystemBackground))
-                    #else
-                        .background(Color(NSColor.controlBackgroundColor))
-                    #endif
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(Color.appAccent)
-            }
-        case let .wifi(wifiAction):
-            WiFiActionButton(wifiAction: wifiAction, connectionState: $wifiConnectionState)
-        }
     }
 
     // MARK: - Actions
@@ -622,10 +401,68 @@ struct NoteEditorView: View {
         }
     }
 
+    private func handleBusinessCardPhotoSelection(_ item: PhotosPickerItem) async {
+        if let data = try? await item.loadTransferable(type: Data.self) {
+            await viewModel.uploadBusinessCardImage(data: data, filename: "profile_\(Int(Date().timeIntervalSince1970)).jpg")
+        }
+    }
+
     #if os(iOS)
     private func handleCameraCapture(_ image: UIImage) async {
         if let data = image.jpegData(compressionQuality: 0.8) {
             await viewModel.uploadImage(data: data, filename: "camera_\(Int(Date().timeIntervalSince1970)).jpg")
+        }
+    }
+
+    private func handleBusinessCardCameraCapture(_ image: UIImage) async {
+        if let data = image.jpegData(compressionQuality: 0.8) {
+            await viewModel.uploadBusinessCardImage(data: data, filename: "profile_\(Int(Date().timeIntervalSince1970)).jpg")
+        }
+    }
+
+    private func applyContact(_ contact: CNContact) {
+        viewModel.businessCardFirstName = contact.givenName
+        viewModel.businessCardLastName = contact.familyName
+        viewModel.businessCardCompany = contact.organizationName
+        viewModel.businessCardJobTitle = contact.jobTitle
+
+        viewModel.businessCardEmails = contact.emailAddresses.map { labeled in
+            TypedValueEntry(type: emailTypeFromCNLabel(labeled.label), value: labeled.value as String)
+        }
+
+        viewModel.businessCardPhones = contact.phoneNumbers.map { labeled in
+            TypedValueEntry(type: phoneTypeFromCNLabel(labeled.label), value: labeled.value.stringValue)
+        }
+
+        viewModel.businessCardWebsite = (contact.urlAddresses.first?.value as String?) ?? ""
+
+        if let postal = contact.postalAddresses.first?.value {
+            viewModel.businessCardAddress = EditableAddress(
+                street: postal.street,
+                city: postal.city,
+                state: postal.state,
+                zip: postal.postalCode,
+                country: postal.country
+            )
+        } else {
+            viewModel.businessCardAddress = EditableAddress()
+        }
+
+        viewModel.businessCardSocialProfiles = contact.socialProfiles.map { labeled in
+            NameValueEntry(name: labeled.value.service, value: labeled.value.username)
+        }
+
+        viewModel.businessCardInstantMessaging = contact.instantMessageAddresses.map { labeled in
+            NameValueEntry(name: labeled.value.service, value: labeled.value.username)
+        }
+
+        // Import contact photo if available
+        if let imageData = contact.imageData {
+            Task {
+                await viewModel.uploadBusinessCardImage(data: imageData, filename: "profile_\(Int(Date().timeIntervalSince1970)).jpg")
+            }
+        } else {
+            viewModel.removeBusinessCardImage()
         }
     }
     #endif
@@ -643,6 +480,11 @@ private enum ActionSheetPresentation: Identifiable {
         case let .edit(index, _): return "edit-\(index)"
         }
     }
+}
+
+private struct PendingAddContact: Identifiable {
+    let id = UUID()
+    let action: AddContactAction
 }
 
 // MARK: - String Identifiable Extension
@@ -688,6 +530,7 @@ extension String: @retroactive Identifiable {
     )
     NoteEditorView(mode: .view(noteId: 1, existing: sampleNote))
 }
+
 #Preview("Edit Mode") {
     let sampleNote = NoteDetail(
         id: 1,
@@ -722,3 +565,74 @@ extension String: @retroactive Identifiable {
     NoteEditorView(mode: .edit(noteId: 1, existing: sampleNote))
 }
 
+#Preview("Business Card - View") {
+    let card = NoteDetail(
+        id: 2,
+        userId: "user-1",
+        _type: .business_hyphen_card,
+        title: "Jane Smith",
+        note: nil,
+        businessCard: .init(value1: .init(
+            firstName: "Jane",
+            lastName: "Smith",
+            emails: [.init(_type: "Work", value: "jane.smith@acme.com")],
+            phones: [.init(_type: "Mobile", value: "+1 (555) 123-4567")],
+            company: "Acme Corporation",
+            jobTitle: "Senior Engineer",
+            website: "https://janesmith.dev",
+            address: .init(value1: .init(street: "123 Innovation Drive", city: "San Francisco", state: "CA", country: "US"))
+        )),
+        images: [],
+        audios: [],
+        videos: [],
+        latitude: nil,
+        longitude: nil,
+        actions: [],
+        visibility: ._public,
+        previewUrl: "https://example.com/preview/2",
+        createdAt: Date(),
+        updatedAt: Date(),
+        whitelist: []
+    )
+    NoteEditorView(mode: .view(noteId: 2, existing: card))
+}
+
+#Preview("Business Card - Edit") {
+    let card = NoteDetail(
+        id: 3,
+        userId: "user-1",
+        _type: .business_hyphen_card,
+        title: "Bob Jones",
+        note: nil,
+        businessCard: .init(value1: .init(
+            firstName: "Bob",
+            lastName: "Jones",
+            emails: [.init(_type: "Work", value: "bob@startup.io")],
+            phones: [.init(_type: "Mobile", value: "+44 7700 900000")],
+            company: "Startup Inc",
+            jobTitle: "CTO"
+        )),
+        images: [],
+        audios: [],
+        videos: [],
+        latitude: nil,
+        longitude: nil,
+        actions: [
+            .url(.init(
+                _type: .url,
+                label: "LinkedIn",
+                url: "https://linkedin.com/in/bobjones"
+            ))
+        ],
+        visibility: ._private,
+        previewUrl: "https://example.com/preview/3",
+        createdAt: Date(),
+        updatedAt: Date(),
+        whitelist: []
+    )
+    NoteEditorView(mode: .edit(noteId: 3, existing: card))
+}
+
+#Preview("Business Card - Create") {
+    NoteEditorView(mode: .create)
+}
