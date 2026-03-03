@@ -481,6 +481,9 @@ case .addContact:
 
 // ✅ UPDATE: saveAction() function
 case .addContact:
+    // Note: The generated OpenAPI enum case name uses the pattern
+    // .add_hyphen_contact because Swift OpenAPI Generator encodes
+    // hyphens in enum raw values (same as .regular_hyphen_text_hyphen_note).
     action = .addContact(.init(
         _type: .add_hyphen_contact,
         firstName: contactFirstName.trimmingCharacters(in: .whitespaces),
@@ -652,6 +655,7 @@ if !viewModel.isReadOnly {
     }
     .pickerStyle(.segmented)
     .padding(.horizontal, 16)
+    .accessibilityIdentifier("note-type-picker")
 }
 ```
 

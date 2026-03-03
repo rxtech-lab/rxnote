@@ -49,7 +49,7 @@ Validates the view model behavior for business card notes.
 | `testDefaultNoteTypeIsRegularText` | Verify `noteType` defaults to `.regularTextNote`. |
 | `testSwitchNoteTypeToBusinessCard` | Set `noteType` to `.businessCard`; verify the type changes. |
 | `testBusinessCardFieldsInitiallyEmpty` | Verify all business card fields (`businessCardFirstName`, etc.) are empty strings on init. |
-| `testCanSaveBusinessCardRequiresFirstAndLastName` | Set `noteType` to `.businessCard`, leave first/last name empty; verify `canSave` is `false`. Fill in first and last name plus title; verify `canSave` is `true`. |
+| `testCanSaveBusinessCardRequiresFirstAndLastName` | Set `noteType` to `.businessCard`, leave first/last name empty; verify `canSave` is `false`. Fill in first name, last name, and note title (always required); verify `canSave` is `true`. |
 | `testSaveBusinessCardIncludesBusinessCardData` | Set up a business card with fields, call `save()`; verify the API request includes the `businessCard` JSON. |
 | `testLoadExistingBusinessCardNote` | Initialize view model with a business card note; verify all business card fields are populated from the note data. |
 | `testSwitchFromBusinessCardToRegularClearsFields` | Fill in business card fields, then switch to `.regularTextNote`; verify the business card data is not sent in the save payload. |
