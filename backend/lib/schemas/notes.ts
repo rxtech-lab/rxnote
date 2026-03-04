@@ -217,3 +217,17 @@ export const PaginatedNotesResponse = z.object({
   data: z.array(NoteResponseSchema).describe("Array of notes"),
   pagination: PaginationInfo,
 });
+
+// Batch fetch request
+export const BatchNotesRequestSchema = z.object({
+  ids: z
+    .array(z.string())
+    .min(1)
+    .max(50)
+    .describe("Array of note IDs to fetch (max 50)"),
+});
+
+// Batch fetch response
+export const BatchNotesResponseSchema = z.object({
+  data: z.array(NoteResponseSchema).describe("Array of accessible notes"),
+});

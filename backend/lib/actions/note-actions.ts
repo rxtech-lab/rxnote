@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq, like, or, desc, asc, and, lt, gt } from "drizzle-orm";
+import { eq, like, or, desc, asc, and, lt, gt, inArray } from "drizzle-orm";
 import {
   db,
   notes,
@@ -92,6 +92,15 @@ export async function getNote(id: string): Promise<Note | undefined> {
     .limit(1);
 
   return results[0];
+}
+
+export async function getNotesByIds(ids: string[]): Promise<Note[]> {
+  if (ids.length === 0) return [];
+  await ensureSchemaInitialized();
+  return db
+    .select()
+    .from(notes)
+    .where(inArray(notes.id, ids));
 }
 
 export async function createNoteAction(
