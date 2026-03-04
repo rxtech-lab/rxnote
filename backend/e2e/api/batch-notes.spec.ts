@@ -169,6 +169,15 @@ test.describe.serial("Batch Fetch Notes", () => {
       });
       expect(response.status()).toBe(400);
     });
+
+    test("should return 400 when exceeding max 50 IDs", async ({ request }) => {
+      const ids = Array.from({ length: 51 }, (_, i) => `id-${i}`);
+      const response = await request.post("/api/v1/notes/batch", {
+        headers: { "X-Test-User-Id": USER_1 },
+        data: { ids },
+      });
+      expect(response.status()).toBe(400);
+    });
   });
 
   test.describe("Cleanup - Delete test notes", () => {
