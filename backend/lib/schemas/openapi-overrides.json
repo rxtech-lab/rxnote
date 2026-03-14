@@ -6,7 +6,8 @@
       "mapping": {
         "url": "#/components/schemas/URLActionSchema",
         "wifi": "#/components/schemas/WifiActionSchema",
-        "add-contact": "#/components/schemas/AddContactActionSchema"
+        "add-contact": "#/components/schemas/AddContactActionSchema",
+        "crypto-wallet": "#/components/schemas/CryptoWalletActionSchema"
       }
     },
     "oneOf": [
@@ -18,6 +19,9 @@
       },
       {
         "$ref": "#/components/schemas/AddContactActionSchema"
+      },
+      {
+        "$ref": "#/components/schemas/CryptoWalletActionSchema"
       }
     ],
     "description": "An action associated with the note"

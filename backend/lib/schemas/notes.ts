@@ -52,11 +52,19 @@ export const AddContactActionSchema = z.object({
   wallets: z.array(NameValueSchema).optional().describe("Web3 wallet addresses"),
 });
 
+export const CryptoWalletActionSchema = z.object({
+  type: z.literal("crypto-wallet"),
+  label: z.string().min(1).describe("Display label for the wallet (e.g., 'My ETH Wallet')"),
+  network: z.string().min(1).describe("Blockchain network name (e.g., 'Ethereum', 'Bitcoin', 'Solana')"),
+  address: z.string().min(1).describe("Wallet address"),
+});
+
 export const ActionSchema = z
   .discriminatedUnion("type", [
     URLActionSchema,
     WifiActionSchema,
     AddContactActionSchema,
+    CryptoWalletActionSchema,
   ])
   .describe("An action associated with the note");
 

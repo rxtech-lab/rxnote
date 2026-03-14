@@ -41,11 +41,15 @@ struct ActionEditorView: View {
     @State private var isFetchingWiFi = false
     @State private var locationManager: CLLocationManager?
     @State private var showContactPicker = false
+    @State private var cryptoWalletLabel = ""
+    @State private var cryptoWalletNetwork = ""
+    @State private var cryptoWalletAddress = ""
 
     enum ActionType: String, CaseIterable {
         case url = "URL"
         case wifi = "WiFi"
         case addContact = "Add Contact"
+        case cryptoWallet = "Crypto Wallet"
     }
 
     enum WifiEncryption: String, CaseIterable {
@@ -67,11 +71,7 @@ struct ActionEditorView: View {
                     Picker("Type", selection: $actionType) {
                         ForEach(ActionType.allCases, id: \.self) { type in
                             Text(type.rawValue).tag(type)
-                                .accessibilityIdentifier(
-                                    type == .addContact
-                                        ? "action-type-add-contact"
-                                        : "action-type-\(type.rawValue.lowercased().replacingOccurrences(of: " ", with: "-"))"
-                                )
+                                .accessibilityIdentifier("action-type-\(type.rawValue.lowercased().replacingOccurrences(of: " ", with: "-"))")
                         }
                     }
                     .pickerStyle(.menu)
@@ -84,6 +84,8 @@ struct ActionEditorView: View {
                     wifiForm
                 case .addContact:
                     addContactForm
+                case .cryptoWallet:
+                    cryptoWalletForm
                 }
             }
             .navigationTitle(isEditing ? "Edit Action" : "New Action")
@@ -320,6 +322,46 @@ struct ActionEditorView: View {
         #endif
     }
 
+    // MARK: - Crypto Wallet Form
+
+    private var cryptoWalletForm: some View {
+        Section("Crypto Wallet Action") {
+            TextField("Label", text: $cryptoWalletLabel)
+                .accessibilityIdentifier("crypto-wallet-label")
+
+            TextField("Wallet Address", text: $cryptoWalletAddress)
+                #if os(iOS)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                #endif
+                .accessibilityIdentifier("crypto-wallet-address")
+                .onChange(of: cryptoWalletAddress) { _, newValue in
+                    autoDetectNetwork(from: newValue)
+                }
+
+            HStack {
+                TextField("Network", text: $cryptoWalletNetwork)
+                    .accessibilityIdentifier("crypto-wallet-network")
+
+                if !cryptoWalletAddress.isEmpty {
+                    let detected = WalletNetwork.detect(from: cryptoWalletAddress)
+                    if detected != .unknown {
+                        Text("Auto-detected")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+    }
+
+    private func autoDetectNetwork(from address: String) {
+        let detected = WalletNetwork.detect(from: address)
+        if detected != .unknown && cryptoWalletNetwork.isEmpty {
+            cryptoWalletNetwork = detected.rawValue
+        }
+    }
+
     #if os(iOS)
     private func populateFromContact(_ contact: CNContact) {
         contactFirstName = contact.givenName
@@ -409,6 +451,10 @@ struct ActionEditorView: View {
         case .addContact:
             return !contactFirstName.trimmingCharacters(in: .whitespaces).isEmpty
                 && !contactLastName.trimmingCharacters(in: .whitespaces).isEmpty
+        case .cryptoWallet:
+            return !cryptoWalletLabel.trimmingCharacters(in: .whitespaces).isEmpty
+                && !cryptoWalletNetwork.trimmingCharacters(in: .whitespaces).isEmpty
+                && !cryptoWalletAddress.trimmingCharacters(in: .whitespaces).isEmpty
         }
     }
 
@@ -459,6 +505,13 @@ struct ActionEditorView: View {
                 website: contactWebsite.isEmpty ? nil : contactWebsite,
                 address: addressPayload
             ))
+        case .cryptoWallet:
+            action = .crypto_hyphen_wallet(.init(
+                _type: .crypto_hyphen_wallet,
+                label: cryptoWalletLabel.trimmingCharacters(in: .whitespaces),
+                network: cryptoWalletNetwork.trimmingCharacters(in: .whitespaces),
+                address: cryptoWalletAddress.trimmingCharacters(in: .whitespaces)
+            ))
         }
         onSave(action)
         dismiss()
@@ -496,6 +549,11 @@ struct ActionEditorView: View {
                     country: addr.country ?? ""
                 )
             }
+        case let .crypto_hyphen_wallet(walletAction):
+            actionType = .cryptoWallet
+            cryptoWalletLabel = walletAction.label
+            cryptoWalletNetwork = walletAction.network
+            cryptoWalletAddress = walletAction.address
         }
     }
 }
@@ -527,6 +585,12 @@ struct ContactAddressEntry {
 }
 #Preview("Create Add Contact Action") {
     ActionEditorView(initialType: .addContact) { action in
+        print("Created: \(action)")
+    }
+}
+
+#Preview("Create Crypto Wallet Action") {
+    ActionEditorView(initialType: .cryptoWallet) { action in
         print("Created: \(action)")
     }
 }

@@ -350,6 +350,9 @@ struct ActionLabelView: View {
                 systemImage: "person.crop.circle.badge.plus"
             )
             .font(.body.weight(.medium))
+        case let .crypto_hyphen_wallet(walletAction):
+            Label(walletAction.label, systemImage: "wallet.bifold")
+                .font(.body.weight(.medium))
         }
     }
 }
@@ -435,6 +438,8 @@ struct ActionButtonsSectionView: View {
             .buttonStyle(.plain)
             .foregroundStyle(Color.appAccent)
             .accessibilityIdentifier("add-contact-button")
+        case let .crypto_hyphen_wallet(walletAction):
+            CryptoWalletActionButton(walletAction: walletAction)
         }
     }
 }
