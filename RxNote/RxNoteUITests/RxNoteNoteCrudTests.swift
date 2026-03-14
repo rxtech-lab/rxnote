@@ -98,6 +98,65 @@ final class RxNoteNoteCrudTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Updated Note Title"].waitForExistence(timeout: 15), "Note detail title should exist after edit")
     }
 
+    // MARK: - Add Contact Action with Import
+
+    func testCreateNoteWithAddContactActionFromImport() throws {
+        let app = launchApp()
+        try app.signInWithEmailAndPassword()
+
+        // Tap add note button
+        XCTAssertTrue(app.addNoteButton.waitForExistence(timeout: 10), "Add note button should exist")
+        app.addNoteButton.tap()
+
+        // Fill in title
+        XCTAssertTrue(app.noteTitleField.waitForExistence(timeout: 10), "Title field should exist")
+        app.noteTitleField.tap()
+        app.noteTitleField.typeText("Note with Contact Action\n")
+
+        // Tap add action button
+        XCTAssertTrue(app.addActionButton.waitForExistence(timeout: 5), "Add action button should exist")
+        app.addActionButton.tap()
+
+        // Select "Add Contact" action type from the picker
+        let typePicker = app.buttons["Type, URL"].firstMatch
+        XCTAssertTrue(typePicker.waitForExistence(timeout: 5), "Type picker should exist")
+        typePicker.tap()
+
+        let addContactOption = app.buttons["Add Contact"].firstMatch
+        XCTAssertTrue(addContactOption.waitForExistence(timeout: 5), "Add Contact option should exist")
+        addContactOption.tap()
+
+        // Tap "Import from Contacts" button
+        XCTAssertTrue(app.contactImportButton.waitForExistence(timeout: 5), "Import from Contacts button should exist")
+        app.contactImportButton.tap()
+
+        // Wait for the contact picker to appear (system CNContactPickerViewController)
+        sleep(1)
+
+        // The contact picker cells are in a table view - tap the first available contact
+        let contactsViewServiceApp = XCUIApplication(bundleIdentifier: "com.apple.ContactsUI.ContactsViewService")
+        let firstContact = contactsViewServiceApp.cells["John Appleseed"].firstMatch
+        XCTAssertTrue(firstContact.waitForExistence(timeout: 5), "First contact should exist")
+        firstContact.tap()
+
+        // After selecting a contact, the fields should be populated
+        // Wait for the first name field to be visible again (picker dismisses)
+        XCTAssertTrue(app.contactFirstNameField.waitForExistence(timeout: 10), "First name field should exist after import")
+
+        // Save the action
+        let saveActionButton = app.buttons["Save"].firstMatch
+        XCTAssertTrue(saveActionButton.waitForExistence(timeout: 5), "Save action button should exist")
+        saveActionButton.tap()
+
+        // Save the note
+        XCTAssertTrue(app.noteSaveButton.waitForExistence(timeout: 5), "Save note button should exist")
+        app.noteSaveButton.tap()
+
+        // Verify we return to the list and the note appears
+        let noteTitle = app.staticTexts["Note with Contact Action"].firstMatch
+        XCTAssertTrue(noteTitle.waitForExistence(timeout: 15), "Created note should appear in the list")
+    }
+
     // MARK: - Delete Note
 
     func testDeleteNote() throws {

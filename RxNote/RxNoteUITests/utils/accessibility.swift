@@ -103,6 +103,10 @@ extension XCUIApplication {
         buttons["add-contact-button"].firstMatch
     }
 
+    var contactImportButton: XCUIElement {
+        buttons["contact-import-button"].firstMatch
+    }
+
     // MARK: - Note Detail
 
     var noteDetailTitle: XCUIElement {

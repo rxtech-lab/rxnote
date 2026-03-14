@@ -142,18 +142,8 @@ struct NoteEditorView: View {
                 #endif
             }
         #if os(iOS)
-            .sheet(isPresented: $showContactPicker, onDismiss: {
-                // Sheet dismissed (either by selection or cancel)
-            }) {
-                ContactPickerViewControllerRepresentable(
-                    onContactSelected: { contact in
-                        applyContact(contact)
-                    },
-                    onDismiss: {
-                        showContactPicker = false
-                    }
-                )
-                .ignoresSafeArea()
+            .contactPicker(isPresented: $showContactPicker) { contact in
+                applyContact(contact)
             }
         #endif
             .alert("Error", isPresented: .init(

@@ -40,9 +40,10 @@ struct TextNoteEditorContent: View {
                     .padding(.horizontal, 16)
                     .accessibilityIdentifier("note-detail-title")
             } else {
-                TextField("Title", text: $viewModel.title, axis: .vertical)
+                TextField("Title", text: $viewModel.title)
                     .font(.title.weight(.bold))
                     .padding(.horizontal, 16)
+                    .submitLabel(.done)
                     .accessibilityIdentifier("note-title-field")
             }
 

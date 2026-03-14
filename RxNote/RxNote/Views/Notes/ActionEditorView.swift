@@ -314,15 +314,8 @@ struct ActionEditorView: View {
             }
         }
         #if os(iOS)
-        .sheet(isPresented: $showContactPicker) {
-            ContactPickerViewControllerRepresentable(
-                onContactSelected: { contact in
-                    populateFromContact(contact)
-                },
-                onDismiss: {
-                    // Sheet dismissed
-                }
-            )
+        .contactPicker(isPresented: $showContactPicker) { contact in
+            populateFromContact(contact)
         }
         #endif
     }
