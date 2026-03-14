@@ -35,6 +35,9 @@ public typealias WifiAction = Components.Schemas.WifiActionSchema
 /// Add contact action
 public typealias AddContactAction = Components.Schemas.AddContactActionSchema
 
+/// Crypto wallet action
+public typealias CryptoWalletAction = Components.Schemas.CryptoWalletActionSchema
+
 /// Action (discriminated union)
 public typealias NoteAction = Components.Schemas.ActionSchema
 

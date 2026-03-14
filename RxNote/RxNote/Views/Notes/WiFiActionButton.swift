@@ -148,7 +148,23 @@ struct WiFiActionButton: View {
         configuration.joinOnce = true
 
         do {
-            try await NEHotspotConfigurationManager.shared.apply(configuration)
+            // Use a longer timeout (30 seconds) for WiFi connection attempts
+            // This accounts for user interaction time and network discovery
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try await NEHotspotConfigurationManager.shared.apply(configuration)
+                }
+                
+                group.addTask {
+                    try await Task.sleep(for: .seconds(30))
+                    throw WiFiConnectionError.timeout
+                }
+                
+                // Wait for the first task to complete (either connection or timeout)
+                try await group.next()
+                group.cancelAll()
+            }
+            
             // Check if we actually connected to the network
             if let currentNetwork = await NEHotspotNetwork.fetchCurrent(),
                currentNetwork.ssid == ssid {
@@ -157,6 +173,8 @@ struct WiFiActionButton: View {
                 // User may have denied or network not found
                 connectionState = .failed(ssid: ssid, message: "Connection cancelled")
             }
+        } catch WiFiConnectionError.timeout {
+            connectionState = .failed(ssid: ssid, message: "Connection timed out")
         } catch {
             handleConnectionError(error, ssid: ssid)
         }
@@ -165,6 +183,12 @@ struct WiFiActionButton: View {
         connectionState = .failed(ssid: wifiAction.ssid, message: "Not available on macOS")
         #endif
     }
+    
+    #if os(iOS)
+    private enum WiFiConnectionError: Error {
+        case timeout
+    }
+    #endif
 
     #if os(iOS)
     private func handleConnectionError(_ error: Error, ssid: String) {

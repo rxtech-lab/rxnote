@@ -11,63 +11,79 @@ import SwiftUI
 import Contacts
 import ContactsUI
 
-struct ContactPickerViewControllerRepresentable: UIViewControllerRepresentable {
+/// A view modifier that presents a CNContactPickerViewController from the root window.
+/// This avoids the issue where CNContactPickerViewController dismisses its presenting
+/// view controller chain, which would close any parent sheets.
+struct ContactPickerModifier: ViewModifier {
+    @Binding var isPresented: Bool
     let onContactSelected: (CNContact) -> Void
-    let onDismiss: () -> Void
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onContactSelected: onContactSelected, onDismiss: onDismiss)
+    
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: isPresented) { _, newValue in
+                if newValue {
+                    presentContactPicker()
+                }
+            }
     }
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        let picker = CNContactPickerViewController()
-        picker.delegate = context.coordinator
+    
+    private func presentContactPicker() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            isPresented = false
+            return
+        }
         
-        // Wrap in a container to prevent the picker from dismissing the parent sheet
-        let container = ContactPickerContainerViewController()
-        container.contactPicker = picker
-        return container
-    }
-
-    func updateUIViewController(_: UIViewController, context _: Context) {}
-
-    final class Coordinator: NSObject, CNContactPickerDelegate {
-        private let onContactSelected: (CNContact) -> Void
-        private let onDismiss: () -> Void
-
-        init(onContactSelected: @escaping (CNContact) -> Void, onDismiss: @escaping () -> Void) {
-            self.onContactSelected = onContactSelected
-            self.onDismiss = onDismiss
+        // Find the topmost presented view controller
+        var topController = rootViewController
+        while let presented = topController.presentedViewController {
+            topController = presented
         }
-
-        func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
-            onContactSelected(contact)
-            onDismiss()
-        }
-
-        func contactPickerDidCancel(_ picker: CNContactPickerViewController) {
-            onDismiss()
-        }
+        
+        let picker = CNContactPickerViewController()
+        let coordinator = ContactPickerCoordinator(
+            onContactSelected: { contact in
+                onContactSelected(contact)
+                isPresented = false
+            },
+            onCancel: {
+                isPresented = false
+            }
+        )
+        
+        // Store coordinator to keep it alive
+        objc_setAssociatedObject(picker, &AssociatedKeys.coordinator, coordinator, .OBJC_ASSOCIATION_RETAIN)
+        picker.delegate = coordinator
+        
+        topController.present(picker, animated: true)
     }
 }
 
-/// Container view controller that presents the contact picker modally
-/// to prevent it from dismissing the parent SwiftUI sheet.
-private class ContactPickerContainerViewController: UIViewController {
-    var contactPicker: CNContactPickerViewController?
-    private var hasPresented = false
+private struct AssociatedKeys {
+    static var coordinator = "contactPickerCoordinator"
+}
+
+private final class ContactPickerCoordinator: NSObject, CNContactPickerDelegate {
+    let onContactSelected: (CNContact) -> Void
+    let onCancel: () -> Void
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+    init(onContactSelected: @escaping (CNContact) -> Void, onCancel: @escaping () -> Void) {
+        self.onContactSelected = onContactSelected
+        self.onCancel = onCancel
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        guard !hasPresented, let picker = contactPicker else { return }
-        hasPresented = true
-        present(picker, animated: true)
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
+        onContactSelected(contact)
+    }
+    
+    func contactPickerDidCancel(_ picker: CNContactPickerViewController) {
+        onCancel()
+    }
+}
+
+extension View {
+    func contactPicker(isPresented: Binding<Bool>, onContactSelected: @escaping (CNContact) -> Void) -> some View {
+        modifier(ContactPickerModifier(isPresented: isPresented, onContactSelected: onContactSelected))
     }
 }
 

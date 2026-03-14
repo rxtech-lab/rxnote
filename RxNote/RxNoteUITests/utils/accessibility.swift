@@ -103,6 +103,28 @@ extension XCUIApplication {
         buttons["add-contact-button"].firstMatch
     }
 
+    var contactImportButton: XCUIElement {
+        buttons["contact-import-button"].firstMatch
+    }
+
+    // MARK: - Crypto Wallet Action
+
+    var cryptoWalletLabelField: XCUIElement {
+        textFields["crypto-wallet-label"].firstMatch
+    }
+
+    var cryptoWalletNetworkField: XCUIElement {
+        textFields["crypto-wallet-network"].firstMatch
+    }
+
+    var cryptoWalletAddressField: XCUIElement {
+        textFields["crypto-wallet-address"].firstMatch
+    }
+
+    var cryptoWalletButton: XCUIElement {
+        buttons["crypto-wallet-button"].firstMatch
+    }
+
     // MARK: - Note Detail
 
     var noteDetailTitle: XCUIElement {
